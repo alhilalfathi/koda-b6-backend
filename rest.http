@@ -1,0 +1,39 @@
+GET /users HTTP/1.1
+Host: localhost:8888
+
+###
+GET /users/2 HTTP/1.1
+Host: localhost:8888
+
+###
+DELETE /users/2 HTTP/1.1
+Host: localhost:8888
+
+###
+PATCH /users/1 HTTP/1.1
+Host: localhost:8888
+
+{
+    "password": "12345678"
+}
+
+###
+POST /register HTTP/1.1
+Host: localhost:8888
+Content-Type: application/json
+
+{
+    "name": "admin 1",
+    "email": "admin@mail.com",
+    "password": "admin1234"
+}
+
+###
+POST /login HTTP/1.1
+Host: localhost:8888
+Content-Type: application/json
+
+{
+    "email": "admin@mail.com",
+    "password": "admin1234"
+}

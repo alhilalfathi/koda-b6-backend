@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"koda-b6-backend/handlers"
 	"koda-b6-backend/models"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
+	"github.com/joho/godotenv"
 )
 
 func corsMiddleware() gin.HandlerFunc {
@@ -18,11 +22,25 @@ func corsMiddleware() gin.HandlerFunc {
 		} else {
 			ctx.Next()
 		}
-
 	}
 }
 
 func main() {
+
+	godotenv.Load()
+
+	connConfig, err := pgx.ParseConfig("")
+
+	if err != nil {
+		fmt.Println("Failed to parse config")
+	}
+
+	conn, err := pgx.Connect(context.Background(), connConfig.ConnString())
+
+	if err != nil {
+		fmt.Println("Failed to connecting db")
+	}
+
 	r := gin.Default()
 
 	r.Use(corsMiddleware())
@@ -32,10 +50,26 @@ func main() {
 	r.POST("/login", handlers.Login)
 
 	r.GET("/users", func(ctx *gin.Context) {
+
+		rows, err := conn.Query(context.Background(), `
+		SELECT id, email, password
+		FROM "USER"
+		`)
+
+		users, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Users])
+
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, models.Response{
+				Success: false,
+				Message: "Failed to get data users",
+			})
+			return
+		}
+
 		ctx.JSON(http.StatusOK, models.Response{
 			Success: true,
 			Message: "List of users",
-			Results: models.UserList,
+			Results: users,
 		})
 	})
 
@@ -116,5 +150,5 @@ func main() {
 		}
 	})
 
-	r.Run("localhost:8888")
+	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))
 }

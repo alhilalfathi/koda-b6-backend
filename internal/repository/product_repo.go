@@ -33,26 +33,9 @@ func (r *ProductRepository) GetAllProduct() ([]models.Product, error) {
 		return nil, err
 	}
 
-	defer rows.Close()
-
-	var products []models.Product
-
-	for rows.Next() {
-		var p models.Product
-
-		err := rows.Scan(
-			&p.Id,
-			&p.ProductName,
-			&p.Desc,
-			&p.Price,
-			&p.Stock,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		products = append(products, p)
+	products, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Product])
+	if err != nil {
+		return nil, err
 	}
 
 	return products, nil
@@ -61,15 +44,15 @@ func (r *ProductRepository) GetAllProduct() ([]models.Product, error) {
 func (r *ProductRepository) GetProductById(id int) (*models.Product, error) {
 	query := `SELECT "id", "product_name", "product_desc", "price", "stock" FROM "PRODUCT" WHERE "id" = $1`
 
-	var p models.Product
-
-	err := r.db.QueryRow(context.Background(), query, id).
-		Scan(&p.Id, &p.ProductName, &p.Desc, &p.Price, &p.Stock)
-
+	rows, err := r.db.Query(context.Background(), query, id)
 	if err != nil {
 		return nil, err
 	}
-	return &p, nil
+	product, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Product])
+	if err != nil {
+		return nil, err
+	}
+	return &product, nil
 }
 
 func (r *ProductRepository) Update(id int, p models.Product) error {

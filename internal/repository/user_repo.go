@@ -19,73 +19,55 @@ func NewUserRepository(d *pgx.Conn) *UserRepository {
 }
 
 func (r *UserRepository) GetAllUser() ([]models.Users, error) {
-
-	query := `SELECT id,email,password FROM "USER"`
+	query := `SELECT id, email, password FROM "USER"`
 
 	rows, err := r.db.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
 	}
 
-	defer rows.Close()
-
-	var users []models.Users
-
-	for rows.Next() {
-		var user models.Users
-
-		err := rows.Scan(
-			&user.Id,
-			&user.Email,
-			&user.Password,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		users = append(users, user)
+	users, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Users])
+	if err != nil {
+		return nil, err
 	}
 
 	return users, nil
 }
 
 func (r *UserRepository) GetById(id string) (*models.Users, error) {
-
-	var user models.Users
 	numId, _ := strconv.Atoi(id)
 
 	query := `SELECT id, fullname, email, password FROM "USER" WHERE id=$1`
 
-	err := r.db.QueryRow(context.Background(), query, numId).
-		Scan(&user.Id, &user.FullName, &user.Email, &user.Password)
-
+	rows, err := r.db.Query(context.Background(), query, numId)
 	if err != nil {
 		return nil, err
 	}
 
+	user, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Users])
+	if err != nil {
+		return nil, err
+	}
 	return &user, nil
 }
 
 func (r *UserRepository) GetByEmail(email string) (*models.Users, error) {
-
-	var user models.Users
-
 	query := `SELECT id, fullname, email, password FROM "USER" WHERE email=$1`
 
-	err := r.db.QueryRow(context.Background(), query, email).
-		Scan(&user.Id, &user.FullName, &user.Email, &user.Password)
-
+	rows, err := r.db.Query(context.Background(), query, email)
 	if err != nil {
 		return nil, err
 	}
 
+	user, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Users])
+	if err != nil {
+		return nil, err
+	}
 	return &user, nil
 }
 
 func (r *UserRepository) Create(user models.Users) error {
-
-	query := `INSERT INTO "USER" (email, password) VALUES ($1,$2)`
+	query := `INSERT INTO "USER" (fullname, email, password) VALUES ($1,$2,$3)`
 
 	_, err := r.db.Exec(context.Background(), query, user.FullName, user.Email, user.Password)
 
@@ -93,14 +75,14 @@ func (r *UserRepository) Create(user models.Users) error {
 }
 
 func (r *UserRepository) Update(email string, user *models.Users) (*models.Users, error) {
-
 	query := `UPDATE "USER"	SET password=$1	WHERE email=$2	RETURNING id, email, password`
 
-	var updatedUser models.Users
+	rows, err := r.db.Query(context.Background(), query, user.Password, email)
+	if err != nil {
+		return nil, err
+	}
 
-	err := r.db.QueryRow(context.Background(), query, user.Password, email).
-		Scan(&updatedUser.Id, &updatedUser.Email, &updatedUser.Password)
-
+	updatedUser, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Users])
 	if err != nil {
 		return nil, err
 	}
@@ -109,14 +91,9 @@ func (r *UserRepository) Update(email string, user *models.Users) (*models.Users
 }
 
 func (r *UserRepository) Delete(email string) error {
-
 	query := `DELETE FROM "USER" WHERE email=$1`
 
 	_, err := r.db.Exec(context.Background(), query, email)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

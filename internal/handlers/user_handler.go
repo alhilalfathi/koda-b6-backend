@@ -23,10 +23,11 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 	users, err := h.service.GetAll()
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, models.Response{
+		ctx.JSON(http.StatusInternalServerError, models.Response{
 			Success: false,
-			Message: "Input invalid",
+			Message: "Failed to get users",
 		})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, models.Response{
@@ -65,12 +66,12 @@ func (h *UserHandler) GetById(ctx *gin.Context) {
 // get user by email
 func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 	email := ctx.Param("email")
-	user, err := h.service.GetById(email)
+	user, err := h.service.GetByEmail(email)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, models.Response{
+		ctx.JSON(http.StatusInternalServerError, models.Response{
 			Success: false,
-			Message: "Input Invalid",
+			Message: "Internal server error",
 		})
 	}
 
@@ -92,8 +93,7 @@ func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 func (h *UserHandler) Create(ctx *gin.Context) {
 	var newUser models.CreateUserRequest
 
-	err := ctx.ShouldBindJSON(&newUser)
-	if err != nil {
+	if err := ctx.ShouldBindJSON(&newUser); err != nil {
 		ctx.JSON(http.StatusBadRequest, models.Response{
 			Success: false,
 			Message: "Create user failed",
@@ -108,7 +108,7 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.JSON(http.StatusBadRequest, models.Response{
+	ctx.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Register successfuly",
 	})
@@ -129,7 +129,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, models.Response{
 			Success: false,
-			Message: err.Error(),
+			Message: "Invalid email or password",
 		})
 		return
 	}
@@ -204,7 +204,7 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.JSON(http.StatusBadRequest, models.Response{
+	ctx.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "User delete successfully",
 	})

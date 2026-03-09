@@ -59,7 +59,7 @@ func main() {
 		users.GET("/", userHandler.GetAll)
 		users.GET("/:id", userHandler.GetById)
 		users.GET("/:email", userHandler.GetByEmail)
-		users.PATCH("/:id", userHandler.Update)
+		users.PATCH("/:email", userHandler.Update)
 		users.DELETE("/:id", userHandler.Delete)
 	}
 

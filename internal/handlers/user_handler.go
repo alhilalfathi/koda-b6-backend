@@ -113,6 +113,32 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 	})
 }
 
+func (h *UserHandler) Login(ctx *gin.Context) {
+	var req models.LoginUserRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Email and password required",
+		})
+		return
+	}
+
+	token, err := h.service.Login(req)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Login success",
+		Results: models.LoginUserResponse{Token: token},
+	})
+}
+
 // update user
 func (h *UserHandler) Update(ctx *gin.Context) {
 	email := ctx.Param("email")

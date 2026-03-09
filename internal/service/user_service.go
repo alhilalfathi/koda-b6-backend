@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/repository"
+	"os"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/matthewhartstonge/argon2"
 )
 
@@ -70,23 +73,27 @@ func (s *UserService) Register(req *models.CreateUserRequest) error {
 	return s.repo.Create(newUser)
 }
 
-func (s *UserService) Create(req *models.CreateUserRequest) error {
+func (s *UserService) Login(req models.LoginUserRequest) (string, error) {
+	user, err := s.repo.GetByEmail(req.Email)
 
-	if req.Email == "" || req.Password == "" {
-		return errors.New("Email and password required")
-	}
-
-	newUser := models.Users{
-		Email:    req.Email,
-		Password: req.Password,
-	}
-
-	err := s.repo.Create(newUser)
 	if err != nil {
-		return fmt.Errorf("Failed to create user: %w", err)
+		return "", errors.New("Invalid email or password")
 	}
 
-	return nil
+	ok, err := argon2.VerifyEncoded([]byte(req.Password), []byte(user.Password))
+	if err != nil || !ok {
+		return "", errors.New("Invalid Email or Password")
+	}
+
+	claims := jwt.MapClaims{
+		"user_id": user.Id,
+		"email":   user.Email,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	secret := os.Getenv("APP_SECRET")
+	return token.SignedString([]byte(secret))
 }
 
 func (s *UserService) Update(email string, u *models.UpdateUserRequest) (*models.Users, error) {

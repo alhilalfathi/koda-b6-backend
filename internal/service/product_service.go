@@ -50,10 +50,10 @@ func (s *ProductService) Update(id int, req models.UpdateProductRequest) error {
 	if req.Desc != "" {
 		existing.Desc = req.Desc
 	}
-	if req.Price != 0 {
+	if req.Price > 0 {
 		existing.Price = req.Price
 	}
-	if req.Stock != 0 {
+	if req.Stock > 0 {
 		existing.Stock = req.Stock
 	}
 

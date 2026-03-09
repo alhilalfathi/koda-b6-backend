@@ -53,8 +53,10 @@ func main() {
 	{
 		// users.POST("/register", userHandler.Register)
 		// users.POST("/login", handlers.Login)
-		users.POST("/", userHandler.GetAll)
-		users.POST("/:id", userHandler.GetById)
+		users.GET("/", userHandler.GetAll)
+		users.GET("/:id", userHandler.GetById)
+		users.PATCH("/:id", userHandler.Update)
+		users.DELETE("/:id", userHandler.Delete)
 	}
 
 	// r.GET("/users", func(ctx *gin.Context) {

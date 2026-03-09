@@ -71,6 +71,9 @@ func main() {
 	{
 		products.POST("/", productHandler.CreateProduct)
 		products.GET("/", productHandler.GetAllProduct)
+		products.GET("/:id", productHandler.GetProductById)
+		products.PATCH("/:id", productHandler.Update)
+		products.DELETE("/:id", productHandler.Delete)
 
 	}
 

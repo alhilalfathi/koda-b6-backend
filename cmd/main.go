@@ -5,26 +5,12 @@ import (
 	"fmt"
 	"koda-b6-backend/internal/di"
 	"koda-b6-backend/internal/middleware"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
-
-func corsMiddleware() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		ctx.Header("Access-Control-Allow-Origin", "http://localhost:8888")
-		ctx.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
-		ctx.Header("Access-Control-Allow-Headers", "Content-type")
-		if ctx.Request.Method == "OPTIONS" {
-			ctx.Data(http.StatusOK, "", []byte(""))
-		} else {
-			ctx.Next()
-		}
-	}
-}
 
 func main() {
 
@@ -44,7 +30,7 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(corsMiddleware())
+	r.Use(middleware.CorsMiddleware())
 
 	container := di.NewContainer(conn)
 

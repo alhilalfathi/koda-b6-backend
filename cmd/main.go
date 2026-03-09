@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"koda-b6-backend/internal/di"
+	"koda-b6-backend/internal/middleware"
 	"net/http"
 	"os"
 
@@ -14,7 +15,8 @@ import (
 
 func corsMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		ctx.Header("Access-Control-Allow-Origin", "http://localhost:5432")
+		ctx.Header("Access-Control-Allow-Origin", "http://localhost:8888")
+		ctx.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 		ctx.Header("Access-Control-Allow-Headers", "Content-type")
 		if ctx.Request.Method == "OPTIONS" {
 			ctx.Data(http.StatusOK, "", []byte(""))
@@ -47,8 +49,10 @@ func main() {
 	container := di.NewContainer(conn)
 
 	userHandler := container.UserHandler()
+	productHandler := container.ProductHandler()
 
 	auth := r.Group("/auth")
+	auth.Use(middleware.AuthMiddleware())
 	{
 		auth.POST("/register", userHandler.Create)
 		auth.POST("/login", userHandler.Login)
@@ -61,6 +65,13 @@ func main() {
 		users.GET("/:email", userHandler.GetByEmail)
 		users.PATCH("/:email", userHandler.Update)
 		users.DELETE("/:id", userHandler.Delete)
+	}
+
+	products := r.Group("/product")
+	{
+		products.POST("/", productHandler.CreateProduct)
+		products.GET("/", productHandler.GetAllProduct)
+
 	}
 
 	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))

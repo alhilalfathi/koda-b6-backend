@@ -98,13 +98,13 @@ func (s *UserService) Login(req models.LoginUserRequest) (string, error) {
 
 func (s *UserService) Update(email string, u *models.UpdateUserRequest) (*models.Users, error) {
 
+	user, _ := s.repo.GetByEmail("email")
 	if u.Password == "" {
 		return nil, errors.New("Password cannot blank")
 	}
-
-	user := &models.Users{
-		Password: u.Password,
-	}
+	argon := argon2.DefaultConfig()
+	encoded, _ := argon.HashEncoded([]byte(u.Password))
+	user.Password = string(encoded)
 
 	updatedUser, err := s.repo.Update(email, user)
 	if err != nil {

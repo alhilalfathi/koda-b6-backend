@@ -23,16 +23,16 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 	users, err := h.service.GetAll()
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "Input invalid",
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Input invalid",
 		})
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "List of all users",
-		"results": users,
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "List of all users",
+		Results: users,
 	})
 }
 
@@ -42,23 +42,48 @@ func (h *UserHandler) GetById(ctx *gin.Context) {
 	user, err := h.service.GetById(id)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "Input Invalid",
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Input Invalid",
 		})
 	}
 
 	if user == nil {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"success": false,
-			"message": "User not found",
+		ctx.JSON(http.StatusNotFound, models.Response{
+			Success: false,
+			Message: "User not found",
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "User found",
-		"results": user,
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "User found",
+		Results: user,
+	})
+}
+
+func (h *UserHandler) GetByEmail(ctx *gin.Context) {
+	email := ctx.Param("email")
+	user, err := h.service.GetById(email)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Input Invalid",
+		})
+	}
+
+	if user == nil {
+		ctx.JSON(http.StatusNotFound, models.Response{
+			Success: false,
+			Message: "User not found",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "User found",
+		Results: user,
 	})
 }
 
@@ -68,16 +93,23 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 
 	err := ctx.ShouldBindJSON(&newUser)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "Create user failed",
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Create user failed",
 		})
 		return
 	}
-	h.service.Create(&newUser)
-	ctx.JSON(http.StatusBadRequest, gin.H{
-		"success": true,
-		"message": "Create user successfuly",
+
+	if err := h.service.Register(&newUser); err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: "Register Failed",
+		})
+		return
+	}
+	ctx.JSON(http.StatusBadRequest, models.Response{
+		Success: true,
+		Message: "Register successfuly",
 	})
 }
 
@@ -85,18 +117,18 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 func (h *UserHandler) Update(ctx *gin.Context) {
 	email := ctx.Param("email")
 	if email == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "Email cannot blank",
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Email cannot blank",
 		})
 		return
 	}
 
 	var user models.UpdateUserRequest
 	if err := ctx.ShouldBindJSON(&user); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "Invalid request body: " + err.Error(),
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Invalid request body: " + err.Error(),
 		})
 		return
 	}
@@ -104,31 +136,31 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 	updatedUser, err := h.service.Update(email, &user)
 	if err != nil {
 		if err.Error() == "User not found" {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"success": false,
-				"message": "User not found",
+			ctx.JSON(http.StatusNotFound, models.Response{
+				Success: false,
+				Message: "User not found",
 			})
 			return
 		}
 		if err.Error() == "Password cannot blank" {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"success": false,
-				"message": err.Error(),
+			ctx.JSON(http.StatusBadRequest, models.Response{
+				Success: false,
+				Message: err.Error(),
 			})
 			return
 		}
 
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": "Failed to update user: " + err.Error(),
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: "Failed to update user: " + err.Error(),
 		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "User updated successfully",
-		"results": updatedUser,
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "User updated successfully",
+		Results: updatedUser,
 	})
 }
 
@@ -137,14 +169,14 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 
 	err := h.service.Delete(email)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": err.Error(),
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: err.Error(),
 		})
 		return
 	}
-	ctx.JSON(http.StatusBadRequest, gin.H{
-		"success": true,
-		"message": "User delete successfully",
+	ctx.JSON(http.StatusBadRequest, models.Response{
+		Success: true,
+		Message: "User delete successfully",
 	})
 }

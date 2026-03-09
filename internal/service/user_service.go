@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/repository"
+
+	"github.com/matthewhartstonge/argon2"
 )
 
 type UserService struct {
@@ -34,6 +36,38 @@ func (s *UserService) GetById(id string) (*models.Users, error) {
 	}
 
 	return user, nil
+}
+
+func (s *UserService) GetByEmail(email string) (*models.Users, error) {
+
+	user, err := s.repo.GetById(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *UserService) Register(req *models.CreateUserRequest) error {
+	existingUser, _ := s.repo.GetByEmail(req.Email)
+
+	if existingUser != nil {
+		return errors.New("Email is registered")
+	}
+
+	argon := argon2.DefaultConfig()
+	encoded, err := argon.HashEncoded([]byte(req.Password))
+
+	if err != nil {
+		return err
+	}
+
+	newUser := models.Users{
+		FullName: req.FullName,
+		Email:    req.Email,
+		Password: string(encoded),
+	}
+	return s.repo.Create(newUser)
 }
 
 func (s *UserService) Create(req *models.CreateUserRequest) error {

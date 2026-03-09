@@ -20,7 +20,9 @@ func NewUserRepository(d *pgx.Conn) *UserRepository {
 
 func (r *UserRepository) GetAllUser() ([]models.Users, error) {
 
-	rows, err := r.db.Query(context.Background(), `SELECT id,email,password FROM "USER"`)
+	query := `SELECT id,email,password FROM "USER"`
+
+	rows, err := r.db.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
 	}
@@ -53,10 +55,10 @@ func (r *UserRepository) GetById(id string) (*models.Users, error) {
 	var user models.Users
 	numId, _ := strconv.Atoi(id)
 
-	query := `SELECT id, email, password FROM "USER" WHERE id=$1`
+	query := `SELECT id, fullname, email, password FROM "USER" WHERE id=$1`
 
 	err := r.db.QueryRow(context.Background(), query, numId).
-		Scan(&user.Id, &user.Email, &user.Password)
+		Scan(&user.Id, &user.FullName, &user.Email, &user.Password)
 
 	if err != nil {
 		return nil, err
@@ -65,15 +67,27 @@ func (r *UserRepository) GetById(id string) (*models.Users, error) {
 	return &user, nil
 }
 
-func (r *UserRepository) Register(user models.Users) {
+func (r *UserRepository) GetByEmail(email string) (*models.Users, error) {
 
+	var user models.Users
+
+	query := `SELECT id, fullname, email, password FROM "USER" WHERE email=$1`
+
+	err := r.db.QueryRow(context.Background(), query, email).
+		Scan(&user.Id, &user.FullName, &user.Email, &user.Password)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (r *UserRepository) Create(user models.Users) error {
 
 	query := `INSERT INTO "USER" (email, password) VALUES ($1,$2)`
 
-	_, err := r.db.Exec(context.Background(), query, user.Email, user.Password)
+	_, err := r.db.Exec(context.Background(), query, user.FullName, user.Email, user.Password)
 
 	return err
 }

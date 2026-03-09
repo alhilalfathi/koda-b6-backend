@@ -48,8 +48,11 @@ func main() {
 
 	userHandler := container.UserHandler()
 
-	r.POST("/register", userHandler.Create)
-	r.POST("/login", userHandler.Login)
+	auth := r.Group("/auth")
+	{
+		auth.POST("/register", userHandler.Create)
+		auth.POST("/login", userHandler.Login)
+	}
 
 	users := r.Group("/users")
 	{

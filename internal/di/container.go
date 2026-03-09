@@ -9,16 +9,21 @@ import (
 )
 
 type Container struct {
-	user        *pgx.Conn
+	db *pgx.Conn
+
 	userRepo    *repository.UserRepository
 	userService *service.UserService
 	userHandler *handlers.UserHandler
+
+	productRepo    *repository.ProductRepository
+	productService *service.ProductService
+	productHandler *handlers.ProductHandler
 }
 
 func NewContainer(db *pgx.Conn) *Container {
 
 	container := Container{
-		user: db,
+		db: db,
 	}
 
 	container.initDependencies()
@@ -27,12 +32,19 @@ func NewContainer(db *pgx.Conn) *Container {
 }
 
 func (c *Container) initDependencies() {
-	c.userRepo = repository.NewUserRepository(c.user)
+	c.userRepo = repository.NewUserRepository(c.db)
 	c.userService = service.NewUserService(c.userRepo)
 	c.userHandler = handlers.NewUserHandler(c.userService)
 
+	c.productRepo = repository.NewProductRepository(c.db)
+	c.productService = service.NewProductService(c.productRepo)
+	c.productHandler = handlers.NewProductHandler(c.productService)
 }
 
 func (c *Container) UserHandler() *handlers.UserHandler {
 	return c.userHandler
+}
+
+func (c *Container) ProductHandler() *handlers.ProductHandler {
+	return c.productHandler
 }

@@ -62,6 +62,7 @@ func (h *UserHandler) GetById(ctx *gin.Context) {
 	})
 }
 
+// get user by email
 func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 	email := ctx.Param("email")
 	user, err := h.service.GetById(email)
@@ -113,6 +114,7 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 	})
 }
 
+// user login
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var req models.LoginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -190,6 +192,7 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 	})
 }
 
+// delete user
 func (h *UserHandler) Delete(ctx *gin.Context) {
 	email := ctx.Param("email")
 

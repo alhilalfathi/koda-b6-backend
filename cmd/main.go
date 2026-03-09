@@ -36,6 +36,7 @@ func main() {
 
 	userHandler := container.UserHandler()
 	productHandler := container.ProductHandler()
+	reviewHandler := container.ReviewHandler()
 
 	auth := r.Group("/auth")
 	auth.Use(middleware.AuthMiddleware())
@@ -53,14 +54,22 @@ func main() {
 		users.DELETE("/:id", userHandler.Delete)
 	}
 
-	products := r.Group("/product")
+	products := r.Group("/products")
 	{
 		products.POST("/", productHandler.CreateProduct)
 		products.GET("/", productHandler.GetAllProduct)
 		products.GET("/:id", productHandler.GetProductById)
 		products.PATCH("/:id", productHandler.Update)
 		products.DELETE("/:id", productHandler.Delete)
+	}
 
+	reviews := r.Group("/reviews")
+	{
+		reviews.POST("/", reviewHandler.CreateReview)
+		reviews.GET("/", reviewHandler.GetAllReview)
+		reviews.GET("/:id", reviewHandler.GetReviewById)
+		reviews.PATCH("/:id", reviewHandler.Update)
+		reviews.DELETE("/:id", reviewHandler.Delete)
 	}
 
 	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))

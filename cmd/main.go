@@ -39,6 +39,7 @@ func main() {
 	reviewHandler := container.ReviewHandler()
 	categoryHandler := container.CategoryHandler()
 	sizeHandler := container.SizeHandler()
+	variantHandler := container.VariantHandler()
 
 	auth := r.Group("/auth")
 	auth.Use(middleware.AuthMiddleware())
@@ -90,6 +91,15 @@ func main() {
 		size.GET("/:id", sizeHandler.GetSizeById)
 		size.PATCH("/:id", sizeHandler.Update)
 		size.DELETE("/:id", sizeHandler.Delete)
+	}
+
+	variant := r.Group("/variant")
+	{
+		variant.POST("/", variantHandler.CreateVariant)
+		variant.GET("/", variantHandler.GetAllVariants)
+		variant.GET("/:id", variantHandler.GetVariantById)
+		variant.PATCH("/:id", variantHandler.Update)
+		variant.DELETE("/:id", variantHandler.Delete)
 	}
 
 	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))

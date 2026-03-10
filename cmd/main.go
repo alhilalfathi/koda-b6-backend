@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"koda-b6-backend/internal/di"
 	"koda-b6-backend/internal/middleware"
+	"koda-b6-backend/routes"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -17,13 +17,11 @@ func main() {
 	godotenv.Load()
 
 	connConfig, err := pgx.ParseConfig("")
-
 	if err != nil {
 		fmt.Println("Failed to parse config")
 	}
 
 	conn, err := pgx.Connect(context.Background(), connConfig.ConnString())
-
 	if err != nil {
 		fmt.Println("Failed to connecting db")
 	}
@@ -32,85 +30,7 @@ func main() {
 
 	r.Use(middleware.CorsMiddleware())
 
-	container := di.NewContainer(conn)
-
-	userHandler := container.UserHandler()
-	productHandler := container.ProductHandler()
-	reviewHandler := container.ReviewHandler()
-	categoryHandler := container.CategoryHandler()
-	sizeHandler := container.SizeHandler()
-	variantHandler := container.VariantHandler()
-	discountHandler := container.DiscountHandler()
-
-	auth := r.Group("/auth")
-	auth.Use(middleware.AuthMiddleware())
-	{
-		auth.POST("/register", userHandler.Create)
-		auth.POST("/login", userHandler.Login)
-	}
-
-	users := r.Group("/users")
-	{
-		users.GET("/", userHandler.GetAll)
-		users.GET("/:id", userHandler.GetById)
-		users.GET("/email/:email", userHandler.GetByEmail)
-		users.PATCH("/:email", userHandler.Update)
-		users.DELETE("/:id", userHandler.Delete)
-	}
-
-	products := r.Group("/products")
-	{
-		products.POST("/", productHandler.CreateProduct)
-		products.GET("/", productHandler.GetAllProduct)
-		products.GET("/:id", productHandler.GetProductById)
-		products.PATCH("/:id", productHandler.Update)
-		products.DELETE("/:id", productHandler.Delete)
-	}
-
-	reviews := r.Group("/reviews")
-	{
-		reviews.POST("/", reviewHandler.CreateReview)
-		reviews.GET("/", reviewHandler.GetAllReview)
-		reviews.GET("/:id", reviewHandler.GetReviewById)
-		reviews.PATCH("/:id", reviewHandler.Update)
-		reviews.DELETE("/:id", reviewHandler.Delete)
-	}
-
-	category := r.Group("/category")
-	{
-		category.POST("/", categoryHandler.CreateCategory)
-		category.GET("/", categoryHandler.GetAllCategory)
-		category.GET("/:id", categoryHandler.GetCategoryById)
-		category.PATCH("/:id", categoryHandler.Update)
-		category.DELETE("/:id", categoryHandler.Delete)
-	}
-
-	size := r.Group("/size")
-	{
-		size.POST("/", sizeHandler.CreateSize)
-		size.GET("/", sizeHandler.GetAllSizes)
-		size.GET("/:id", sizeHandler.GetSizeById)
-		size.PATCH("/:id", sizeHandler.Update)
-		size.DELETE("/:id", sizeHandler.Delete)
-	}
-
-	variant := r.Group("/variant")
-	{
-		variant.POST("/", variantHandler.CreateVariant)
-		variant.GET("/", variantHandler.GetAllVariants)
-		variant.GET("/:id", variantHandler.GetVariantById)
-		variant.PATCH("/:id", variantHandler.Update)
-		variant.DELETE("/:id", variantHandler.Delete)
-	}
-
-	discount := r.Group("/discount")
-	{
-		discount.POST("/", discountHandler.CreateDiscount)
-		discount.GET("/", discountHandler.GetAllDiscount)
-		discount.GET("/:id", discountHandler.GetDiscountById)
-		discount.PATCH("/:id", discountHandler.Update)
-		discount.DELETE("/:id", discountHandler.Delete)
-	}
+	routes.SetupRoutes(r, conn)
 
 	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))
 }

@@ -37,6 +37,7 @@ func main() {
 	userHandler := container.UserHandler()
 	productHandler := container.ProductHandler()
 	reviewHandler := container.ReviewHandler()
+	categoryHandler := container.CategoryHandler()
 
 	auth := r.Group("/auth")
 	auth.Use(middleware.AuthMiddleware())
@@ -70,6 +71,15 @@ func main() {
 		reviews.GET("/:id", reviewHandler.GetReviewById)
 		reviews.PATCH("/:id", reviewHandler.Update)
 		reviews.DELETE("/:id", reviewHandler.Delete)
+	}
+
+	category := r.Group("/category")
+	{
+		category.POST("/", categoryHandler.CreateCategory)
+		category.GET("/", categoryHandler.GetAllCategory)
+		category.GET("/:id", categoryHandler.GetCategoryById)
+		category.PATCH("/:id", categoryHandler.Update)
+		category.DELETE("/:id", categoryHandler.Delete)
 	}
 
 	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))

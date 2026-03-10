@@ -26,6 +26,10 @@ type Container struct {
 	categoryRepo    *repository.CategoryRepository
 	categoryService *service.CategoryService
 	categoryHandler *handlers.CategoryHandler
+
+	sizeRepo    *repository.SizeRepository
+	sizeService *service.SizeService
+	sizeHandler *handlers.SizeHandler
 }
 
 func NewContainer(db *pgx.Conn) *Container {
@@ -55,6 +59,10 @@ func (c *Container) initDependencies() {
 	c.categoryRepo = repository.NewCategoryRepository(c.db)
 	c.categoryService = service.NewCategoryService(c.categoryRepo)
 	c.categoryHandler = handlers.NewCategoryHandler(c.categoryService)
+
+	c.sizeRepo = repository.NewSizeRepository(c.db)
+	c.sizeService = service.NewSizeService(c.sizeRepo)
+	c.sizeHandler = handlers.NewSizeHandler(c.sizeService)
 }
 
 func (c *Container) UserHandler() *handlers.UserHandler {
@@ -71,4 +79,8 @@ func (c *Container) ReviewHandler() *handlers.ReviewHandler {
 
 func (c *Container) CategoryHandler() *handlers.CategoryHandler {
 	return c.categoryHandler
+}
+
+func (c *Container) SizeHandler() *handlers.SizeHandler {
+	return c.sizeHandler
 }

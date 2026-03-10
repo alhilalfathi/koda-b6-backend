@@ -39,7 +39,7 @@ func (s *ReviewService) Update(id int, req models.UpdateReviewRequest) error {
 	existing, err := s.repo.GetReviewById(id)
 
 	if err != nil {
-		return errors.New("product not found")
+		return errors.New("review not found")
 	}
 	if req.Messages != "" {
 		existing.Messages = req.Messages

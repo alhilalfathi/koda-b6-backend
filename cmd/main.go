@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"koda-b6-backend/internal/middleware"
-	"koda-b6-backend/routes"
+	"koda-b6-backend/internal/routes"
 	"os"
 
 	"github.com/gin-gonic/gin"

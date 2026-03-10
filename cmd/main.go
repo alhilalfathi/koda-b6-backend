@@ -40,6 +40,7 @@ func main() {
 	categoryHandler := container.CategoryHandler()
 	sizeHandler := container.SizeHandler()
 	variantHandler := container.VariantHandler()
+	discountHandler := container.DiscountHandler()
 
 	auth := r.Group("/auth")
 	auth.Use(middleware.AuthMiddleware())
@@ -52,7 +53,7 @@ func main() {
 	{
 		users.GET("/", userHandler.GetAll)
 		users.GET("/:id", userHandler.GetById)
-		users.GET("/:email", userHandler.GetByEmail)
+		users.GET("/email/:email", userHandler.GetByEmail)
 		users.PATCH("/:email", userHandler.Update)
 		users.DELETE("/:id", userHandler.Delete)
 	}
@@ -100,6 +101,15 @@ func main() {
 		variant.GET("/:id", variantHandler.GetVariantById)
 		variant.PATCH("/:id", variantHandler.Update)
 		variant.DELETE("/:id", variantHandler.Delete)
+	}
+
+	discount := r.Group("/discount")
+	{
+		discount.POST("/", discountHandler.CreateDiscount)
+		discount.GET("/", discountHandler.GetAllDiscount)
+		discount.GET("/:id", discountHandler.GetDiscountById)
+		discount.PATCH("/:id", discountHandler.Update)
+		discount.DELETE("/:id", discountHandler.Delete)
 	}
 
 	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))

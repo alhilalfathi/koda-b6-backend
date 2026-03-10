@@ -31,7 +31,7 @@ func (s *ProductService) CreateProduct(req *models.CreateProductRequest) error {
 }
 
 func (s *ProductService) GetAllProducts() ([]models.Product, error) {
-	return s.repo.GetAllProduct()
+	return s.repo.GetAllProducts()
 }
 
 func (s *ProductService) GetProductById(id int) (*models.Product, error) {

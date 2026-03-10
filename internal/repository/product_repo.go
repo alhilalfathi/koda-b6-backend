@@ -25,7 +25,7 @@ func (r *ProductRepository) CreateProduct(product models.Product) error {
 	return err
 }
 
-func (r *ProductRepository) GetAllProduct() ([]models.Product, error) {
+func (r *ProductRepository) GetAllProducts() ([]models.Product, error) {
 	query := `SELECT "id", "product_name", "product_desc", "price", "stock" FROM "PRODUCT"`
 
 	rows, err := r.db.Query(context.Background(), query)

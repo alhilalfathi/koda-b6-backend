@@ -38,6 +38,7 @@ func main() {
 	productHandler := container.ProductHandler()
 	reviewHandler := container.ReviewHandler()
 	categoryHandler := container.CategoryHandler()
+	sizeHandler := container.SizeHandler()
 
 	auth := r.Group("/auth")
 	auth.Use(middleware.AuthMiddleware())
@@ -80,6 +81,15 @@ func main() {
 		category.GET("/:id", categoryHandler.GetCategoryById)
 		category.PATCH("/:id", categoryHandler.Update)
 		category.DELETE("/:id", categoryHandler.Delete)
+	}
+
+	size := r.Group("/size")
+	{
+		size.POST("/", sizeHandler.CreateSize)
+		size.GET("/", sizeHandler.GetAllSizes)
+		size.GET("/:id", sizeHandler.GetSizeById)
+		size.PATCH("/:id", sizeHandler.Update)
+		size.DELETE("/:id", sizeHandler.Delete)
 	}
 
 	r.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT")))

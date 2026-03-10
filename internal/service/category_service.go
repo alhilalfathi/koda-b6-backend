@@ -18,7 +18,7 @@ func NewCategoryService(rp *repository.CategoryRepository) *CategoryService {
 
 func (s *CategoryService) CreateCategory(req *models.CreateCategoryRequest) error {
 	if req.Category != "" {
-		return errors.New("Price must be greater than zero")
+		return errors.New("Input invalid")
 	}
 
 	cat := models.Category{

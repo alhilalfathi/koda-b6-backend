@@ -43,7 +43,7 @@ func (s *DiscountService) Update(id int, req models.UpdateDiscountRequest) error
 	if err != nil {
 		return errors.New("Discount not found")
 	}
-	if req.Rate < 0 {
+	if req.Rate > 0 {
 		existing.Rate = req.Rate
 	}
 	if req.Desc != "" {

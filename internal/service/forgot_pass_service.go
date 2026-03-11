@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/repository"
 	"math/rand"
@@ -26,6 +27,7 @@ func (s *ForgotPassService) RequestForgotPass(req *models.CreateForgotPassReques
 	}
 
 	code := rand.Intn(99999)
+	fmt.Println(code)
 
 	result := models.ForgotPass{
 		Email: user.Email,

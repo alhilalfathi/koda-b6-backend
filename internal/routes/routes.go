@@ -106,7 +106,7 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 	}
 	p := r.Group("/landing")
 	{
-		p.GET("/", landingHandler.RecommendedProducts)
+		p.GET("/recommended-products", landingHandler.RecommendedProducts)
 	}
 
 }

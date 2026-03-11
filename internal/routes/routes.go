@@ -20,85 +20,93 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 	discountHandler := container.DiscountHandler()
 	carthandler := container.CartHandler()
 	forgotPassHandler := container.ForgotPassHandler()
+	landingHandler := container.LandingHandler()
 
-	auth := r.Group("/auth")
-	auth.Use(middleware.AuthMiddleware())
+	a := r.Group("/admin")
 	{
-		auth.POST("/register", userHandler.Create)
-		auth.POST("/login", userHandler.Login)
-		auth.POST("/:email", forgotPassHandler.RequestForgotPass)
-		auth.PATCH("/:email", forgotPassHandler.ResetPass)
+		auth := a.Group("/auth")
+		{
+			auth.POST("/register", userHandler.Create)
+			auth.POST("/login", userHandler.Login)
+			auth.POST("/forgot-password", forgotPassHandler.RequestForgotPass)
+			auth.PATCH("/forgot-password", forgotPassHandler.ResetPass)
+		}
+
+		users := a.Group("/users", middleware.AuthMiddleware())
+		{
+			users.GET("/", userHandler.GetAll)
+			users.GET("/:id", userHandler.GetById)
+			users.GET("/email/:email", userHandler.GetByEmail)
+			users.PATCH("/:email", userHandler.Update)
+			users.DELETE("/:id", userHandler.Delete)
+		}
+
+		products := a.Group("/products")
+		{
+			products.POST("/", productHandler.CreateProduct)
+			products.GET("/", productHandler.GetAllProduct)
+			products.GET("/:id", productHandler.GetProductById)
+			products.PATCH("/:id", productHandler.Update)
+			products.DELETE("/:id", productHandler.Delete)
+		}
+
+		reviews := a.Group("/reviews")
+		{
+			reviews.POST("/", reviewHandler.CreateReview)
+			reviews.GET("/", reviewHandler.GetAllReview)
+			reviews.GET("/:id", reviewHandler.GetReviewById)
+			reviews.PATCH("/:id", reviewHandler.Update)
+			reviews.DELETE("/:id", reviewHandler.Delete)
+		}
+
+		category := a.Group("/category")
+		{
+			category.POST("/", categoryHandler.CreateCategory)
+			category.GET("/", categoryHandler.GetAllCategory)
+			category.GET("/:id", categoryHandler.GetCategoryById)
+			category.PATCH("/:id", categoryHandler.Update)
+			category.DELETE("/:id", categoryHandler.Delete)
+		}
+
+		size := a.Group("/size")
+		{
+			size.POST("/", sizeHandler.CreateSize)
+			size.GET("/", sizeHandler.GetAllSizes)
+			size.GET("/:id", sizeHandler.GetSizeById)
+			size.PATCH("/:id", sizeHandler.Update)
+			size.DELETE("/:id", sizeHandler.Delete)
+		}
+
+		variant := a.Group("/variant")
+		{
+			variant.POST("/", variantHandler.CreateVariant)
+			variant.GET("/", variantHandler.GetAllVariants)
+			variant.GET("/:id", variantHandler.GetVariantById)
+			variant.PATCH("/:id", variantHandler.Update)
+			variant.DELETE("/:id", variantHandler.Delete)
+		}
+
+		discount := a.Group("/discount")
+		{
+			discount.POST("/", discountHandler.CreateDiscount)
+			discount.GET("/", discountHandler.GetAllDiscount)
+			discount.GET("/:id", discountHandler.GetDiscountById)
+			discount.PATCH("/:id", discountHandler.Update)
+			discount.DELETE("/:id", discountHandler.Delete)
+		}
+
+		cart := a.Group("/cart")
+		{
+			cart.POST("/", carthandler.CreateCart)
+			cart.GET("/", carthandler.GetAllCarts)
+			cart.GET("/:id", carthandler.GetCartById)
+			cart.PATCH("/:id", carthandler.Update)
+			cart.DELETE("/:id", carthandler.Delete)
+		}
+	}
+	p := r.Group("/landing")
+	{
+		p.GET("/", landingHandler.RecommendedProducts)
 	}
 
-	users := r.Group("/users")
-	{
-		users.GET("/", userHandler.GetAll)
-		users.GET("/:id", userHandler.GetById)
-		users.GET("/email/:email", userHandler.GetByEmail)
-		users.PATCH("/:email", userHandler.Update)
-		users.DELETE("/:id", userHandler.Delete)
-	}
-
-	products := r.Group("/products")
-	{
-		products.POST("/", productHandler.CreateProduct)
-		products.GET("/", productHandler.GetAllProduct)
-		products.GET("/:id", productHandler.GetProductById)
-		products.PATCH("/:id", productHandler.Update)
-		products.DELETE("/:id", productHandler.Delete)
-	}
-
-	reviews := r.Group("/reviews")
-	{
-		reviews.POST("/", reviewHandler.CreateReview)
-		reviews.GET("/", reviewHandler.GetAllReview)
-		reviews.GET("/:id", reviewHandler.GetReviewById)
-		reviews.PATCH("/:id", reviewHandler.Update)
-		reviews.DELETE("/:id", reviewHandler.Delete)
-	}
-
-	category := r.Group("/category")
-	{
-		category.POST("/", categoryHandler.CreateCategory)
-		category.GET("/", categoryHandler.GetAllCategory)
-		category.GET("/:id", categoryHandler.GetCategoryById)
-		category.PATCH("/:id", categoryHandler.Update)
-		category.DELETE("/:id", categoryHandler.Delete)
-	}
-
-	size := r.Group("/size")
-	{
-		size.POST("/", sizeHandler.CreateSize)
-		size.GET("/", sizeHandler.GetAllSizes)
-		size.GET("/:id", sizeHandler.GetSizeById)
-		size.PATCH("/:id", sizeHandler.Update)
-		size.DELETE("/:id", sizeHandler.Delete)
-	}
-
-	variant := r.Group("/variant")
-	{
-		variant.POST("/", variantHandler.CreateVariant)
-		variant.GET("/", variantHandler.GetAllVariants)
-		variant.GET("/:id", variantHandler.GetVariantById)
-		variant.PATCH("/:id", variantHandler.Update)
-		variant.DELETE("/:id", variantHandler.Delete)
-	}
-
-	discount := r.Group("/discount")
-	{
-		discount.POST("/", discountHandler.CreateDiscount)
-		discount.GET("/", discountHandler.GetAllDiscount)
-		discount.GET("/:id", discountHandler.GetDiscountById)
-		discount.PATCH("/:id", discountHandler.Update)
-		discount.DELETE("/:id", discountHandler.Delete)
-	}
-
-	cart := r.Group("/cart")
-	{
-		cart.POST("/", carthandler.CreateCart)
-		cart.GET("/", carthandler.GetAllCarts)
-		cart.GET("/:id", carthandler.GetCartById)
-		cart.PATCH("/:id", carthandler.Update)
-		cart.DELETE("/:id", carthandler.Delete)
-	}
 }

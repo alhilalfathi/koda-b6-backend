@@ -19,6 +19,7 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 	variantHandler := container.VariantHandler()
 	discountHandler := container.DiscountHandler()
 	carthandler := container.CartHandler()
+	trxHandler := container.TransactionHandler()
 	forgotPassHandler := container.ForgotPassHandler()
 	landingHandler := container.LandingHandler()
 
@@ -102,6 +103,13 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 			cart.GET("/:id", carthandler.GetCartById)
 			cart.PATCH("/:id", carthandler.Update)
 			cart.DELETE("/:id", carthandler.Delete)
+		}
+
+		trx := a.Group("/transaction")
+		{
+			trx.POST("/", trxHandler.CreateTransaction)
+			trx.GET("/", trxHandler.GetAllTransaction)
+			trx.GET("/:id", trxHandler.GetTransactionById)
 		}
 	}
 

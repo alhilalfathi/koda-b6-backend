@@ -47,6 +47,7 @@ func (s *ForgotPassService) ResetPass(req *models.UpdateForgotPassRequest) error
 	if err != nil {
 		return errors.New("Email not found")
 	}
+	user.Password = req.Password
 
 	s.userRepo.Update(req.Email, user)
 

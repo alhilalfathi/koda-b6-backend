@@ -12,6 +12,7 @@ type CreateForgotPassRequest struct {
 }
 
 type UpdateForgotPassRequest struct {
-	Email string `json:"email" db:"email"`
-	Code  int    `json:"code" db:"code"`
+	Email    string `json:"email" db:"email"`
+	Code     int    `json:"code" db:"code"`
+	Password string `json:"password"`
 }

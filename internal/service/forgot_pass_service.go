@@ -27,7 +27,7 @@ func (s *ForgotPassService) RequestForgotPass(req *models.CreateForgotPassReques
 	}
 
 	code := rand.Intn(99999)
-	fmt.Println(code)
+	fmt.Printf("Generated Code: %d\n", code)
 
 	result := models.ForgotPass{
 		Email: user.Email,

@@ -2,5 +2,5 @@ CREATE TABLE IF NOT EXISTS "FORGOT_PASS"(
     "id" SERIAL PRIMARY KEY,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "email" VARCHAR(255),
-    "code" INT
+    "code" VARCHAR(255)
 );

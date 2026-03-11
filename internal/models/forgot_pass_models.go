@@ -9,7 +9,6 @@ type ForgotPass struct {
 
 type CreateForgotPassRequest struct {
 	Email string `json:"email" db:"email"`
-	Code  int    `json:"code" db:"code"`
 }
 
 type UpdateForgotPassRequest struct {

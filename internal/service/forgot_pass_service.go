@@ -37,7 +37,7 @@ func (s *ForgotPassService) RequestForgotPass(req *models.CreateForgotPassReques
 	return s.forgotPassRepo.CreateForgotPass(result)
 }
 
-func (s *ForgotPassService) ResetPass(req *models.CreateForgotPassRequest) error {
+func (s *ForgotPassService) ResetPass(req *models.UpdateForgotPassRequest) error {
 	_, err := s.forgotPassRepo.GetByEmailCode(req.Email, req.Code)
 	if err != nil {
 		return errors.New("Email and Code invalid")

@@ -38,6 +38,14 @@ type Container struct {
 	discountRepo    *repository.DiscountRepository
 	discountService *service.DiscountService
 	discountHandler *handlers.DiscountHandler
+
+	cartRepo    *repository.CartRepository
+	cartService *service.CartService
+	cartHandler *handlers.CartHandler
+
+	forgotPassRepo    *repository.ForgotPassRepository
+	forgotPassService *service.ForgotPassService
+	forgotPassHandler *handlers.ForgotPassHandler
 }
 
 func NewContainer(db *pgx.Conn) *Container {
@@ -79,6 +87,14 @@ func (c *Container) initDependencies() {
 	c.discountRepo = repository.NewDiscountRepository(c.db)
 	c.discountService = service.NewDiscountService(c.discountRepo)
 	c.discountHandler = handlers.NewDiscountHandler(c.discountService)
+
+	c.cartRepo = repository.NewCartRepository(c.db)
+	c.cartService = service.NewCartService(c.cartRepo)
+	c.cartHandler = handlers.NewCartHandler(c.cartService)
+
+	c.forgotPassRepo = repository.NewForgotPassRepository(c.db)
+	c.forgotPassService = service.NewForgotPassService(c.forgotPassRepo, c.userRepo)
+	c.forgotPassHandler = handlers.NewForgotPassHandler(c.forgotPassService)
 }
 
 func (c *Container) UserHandler() *handlers.UserHandler {
@@ -107,4 +123,12 @@ func (c *Container) VariantHandler() *handlers.VariantHandler {
 
 func (c *Container) DiscountHandler() *handlers.DiscountHandler {
 	return c.discountHandler
+}
+
+func (c *Container) CartHandler() *handlers.CartHandler {
+	return c.cartHandler
+}
+
+func (c *Container) ForgotPassHandler() *handlers.ForgotPassHandler {
+	return c.forgotPassHandler
 }

@@ -2,14 +2,9 @@ package service
 
 import (
 	"errors"
+	"koda-b6-backend/internal/lib"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/repository"
-	"os"
-	"time"
-
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/jackc/pgx/v5"
-	"github.com/matthewhartstonge/argon2"
 )
 
 type UserService struct {
@@ -30,9 +25,6 @@ func (s *UserService) GetById(id string) (*models.Users, error) {
 
 	user, err := s.repo.GetById(id)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, errors.New("user not found")
-		}
 		return nil, err
 	}
 
@@ -53,11 +45,10 @@ func (s *UserService) Register(req *models.CreateUserRequest) error {
 	existingUser, _ := s.repo.GetByEmail(req.Email)
 
 	if existingUser != nil {
-		return errors.New("Email is registered")
+		return errors.New("Email was registered")
 	}
 
-	argon := argon2.DefaultConfig()
-	encoded, err := argon.HashEncoded([]byte(req.Password))
+	hashed, err := lib.HashPassword(req.Password)
 	if err != nil {
 		return err
 	}
@@ -65,7 +56,7 @@ func (s *UserService) Register(req *models.CreateUserRequest) error {
 	newUser := models.Users{
 		FullName: req.FullName,
 		Email:    req.Email,
-		Password: string(encoded),
+		Password: hashed,
 	}
 	return s.repo.Create(newUser)
 }
@@ -76,37 +67,37 @@ func (s *UserService) Login(req models.LoginUserRequest) (string, error) {
 		return "", errors.New("Invalid email or password")
 	}
 
-	ok, err := argon2.VerifyEncoded([]byte(req.Password), []byte(user.Password))
-	if err != nil || !ok {
+	ok := lib.VerifyPassword(req.Password, user.Password)
+	if !ok {
 		return "", errors.New("Invalid Email or Password")
 	}
 
-	claims := jwt.MapClaims{
-		"user_id": user.Id,
-		"email":   user.Email,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
-	}
+	if ok {
+		token, err := lib.GenerateToken(user.Id)
+		if err != nil {
+			return "", err
+		}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	secret := os.Getenv("APP_SECRET")
-	return token.SignedString([]byte(secret))
+		return token, nil
+	}
+	return "", err
 }
 
-func (s *UserService) Update(email string, u *models.UpdateUserRequest) (*models.Users, error) {
+func (s *UserService) Update(email string, req *models.UpdateUserRequest) (*models.Users, error) {
 	user, err := s.repo.GetByEmail("email")
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
-	if u.Password == "" {
-		return nil, errors.New("Password cannot blank")
-	}
-	argon := argon2.DefaultConfig()
-	encoded, err := argon.HashEncoded([]byte(u.Password))
-	if err != nil {
-		return nil, err
-	}
 
-	user.Password = string(encoded)
+	if req.FullName != "" {
+		user.FullName = req.FullName
+	}
+	if req.Email != "" {
+		user.Email = req.Email
+	}
+	if req.Password != "" {
+		user.Password = req.Password
+	}
 
 	return s.repo.Update(email, user)
 }

@@ -1,0 +1,146 @@
+package handlers
+
+import (
+	"koda-b6-backend/internal/models"
+	"koda-b6-backend/internal/service"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+type CartHandler struct {
+	service *service.CartService
+}
+
+func NewCartHandler(s *service.CartService) *CartHandler {
+	return &CartHandler{
+		service: s,
+	}
+}
+
+func (h *CartHandler) CreateCart(ctx *gin.Context) {
+	var req models.CreateCartRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	if err := h.service.CreateCart(&req); err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, models.Response{
+		Success: true,
+		Message: "Cart created",
+	})
+}
+
+func (h *CartHandler) GetAllCarts(ctx *gin.Context) {
+	cart, err := h.service.GetAllCarts()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Cart List",
+		Results: cart,
+	})
+}
+
+func (h *CartHandler) GetCartById(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Cart id invalid",
+		})
+		return
+	}
+
+	cart, err := h.service.GetCartById(id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Cart found",
+		Results: cart,
+	})
+}
+
+func (h *CartHandler) Update(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Cart id invalid",
+		})
+		return
+	}
+
+	var req models.UpdateCartRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	if err := h.service.Update(id, req); err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Cart updated successfully",
+	})
+}
+
+func (h *CartHandler) Delete(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Cart id invalid",
+		})
+		return
+	}
+
+	if err := h.service.Delete(id); err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Cart deleted",
+	})
+}

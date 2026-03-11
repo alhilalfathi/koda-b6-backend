@@ -68,3 +68,26 @@ func (r *ProductRepository) Delete(id int) error {
 	_, err := r.db.Exec(context.Background(), query, id)
 	return err
 }
+
+func (r *ProductRepository) RecomendedProducts() ([]models.Product, error) {
+	query := `
+		SELECT "id", "product_name", "product_desc", "price", "stock", COUNT("product_id") AS "total_review"
+		FROM "PRODUCT"
+		JOIN "REVIEWS" ON "REVIEWS"."product_id" = "PRODUCT"."id"
+		GROUP BY "PRODUCT"."id"
+		ORDER BY "total_review" DESC
+		LIMIT 4
+	`
+
+	rows, err := r.db.Query(context.Background(), query)
+	if err != nil {
+		return nil, err
+	}
+
+	products, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Product])
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}

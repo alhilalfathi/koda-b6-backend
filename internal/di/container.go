@@ -46,6 +46,10 @@ type Container struct {
 	forgotPassRepo    *repository.ForgotPassRepository
 	forgotPassService *service.ForgotPassService
 	forgotPassHandler *handlers.ForgotPassHandler
+
+	landingRepo    *repository.ProductRepository
+	landingService *service.LandingService
+	landingHandler *handlers.LandingHandler
 }
 
 func NewContainer(db *pgx.Conn) *Container {
@@ -95,6 +99,10 @@ func (c *Container) initDependencies() {
 	c.forgotPassRepo = repository.NewForgotPassRepository(c.db)
 	c.forgotPassService = service.NewForgotPassService(c.forgotPassRepo, c.userRepo)
 	c.forgotPassHandler = handlers.NewForgotPassHandler(c.forgotPassService)
+
+	c.landingRepo = repository.NewProductRepository(c.db)
+	c.landingService = service.NewLandingService(c.landingRepo)
+	c.landingHandler = handlers.NewLandingHandler(c.landingService)
 }
 
 func (c *Container) UserHandler() *handlers.UserHandler {
@@ -131,4 +139,8 @@ func (c *Container) CartHandler() *handlers.CartHandler {
 
 func (c *Container) ForgotPassHandler() *handlers.ForgotPassHandler {
 	return c.forgotPassHandler
+}
+
+func (c *Container) LandingHandler() *handlers.LandingHandler {
+	return c.landingHandler
 }

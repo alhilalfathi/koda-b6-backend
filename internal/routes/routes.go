@@ -18,12 +18,16 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 	sizeHandler := container.SizeHandler()
 	variantHandler := container.VariantHandler()
 	discountHandler := container.DiscountHandler()
+	carthandler := container.CartHandler()
+	forgotPassHandler := container.ForgotPassHandler()
 
 	auth := r.Group("/auth")
 	auth.Use(middleware.AuthMiddleware())
 	{
 		auth.POST("/register", userHandler.Create)
 		auth.POST("/login", userHandler.Login)
+		auth.POST("/:email", forgotPassHandler.RequestForgotPass)
+		auth.PATCH("/:email", forgotPassHandler.ResetPass)
 	}
 
 	users := r.Group("/users")
@@ -87,5 +91,14 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 		discount.GET("/:id", discountHandler.GetDiscountById)
 		discount.PATCH("/:id", discountHandler.Update)
 		discount.DELETE("/:id", discountHandler.Delete)
+	}
+
+	cart := r.Group("/cart")
+	{
+		cart.POST("/", carthandler.CreateCart)
+		cart.GET("/", carthandler.GetAllCarts)
+		cart.GET("/:id", carthandler.GetCartById)
+		cart.PATCH("/:id", carthandler.Update)
+		cart.DELETE("/:id", carthandler.Delete)
 	}
 }

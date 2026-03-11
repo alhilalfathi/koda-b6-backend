@@ -104,9 +104,7 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 			cart.DELETE("/:id", carthandler.Delete)
 		}
 	}
-	p := r.Group("/recommended-products")
-	{
-		p.GET("/", landingHandler.RecommendedProducts)
-	}
 
+	r.GET("/recommended-products", landingHandler.RecommendedProducts)
+	r.GET("/review", landingHandler.GetAllReview)
 }

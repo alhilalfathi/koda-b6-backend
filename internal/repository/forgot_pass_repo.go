@@ -25,7 +25,7 @@ func (r *ForgotPassRepository) CreateForgotPass(p models.ForgotPass) error {
 	return err
 }
 
-func (r *ForgotPassRepository) GetByEmailCode(email string, code string) (*models.ForgotPass, error) {
+func (r *ForgotPassRepository) GetByEmailCode(email string, code int) (*models.ForgotPass, error) {
 	query := `SELECT id, email, code FROM "FORGOT_PASS" WHERE email=$1 AND code=$2`
 
 	rows, err := r.db.Query(context.Background(), query, email, code)
@@ -40,7 +40,7 @@ func (r *ForgotPassRepository) GetByEmailCode(email string, code string) (*model
 	return &user, nil
 }
 
-func (r *ForgotPassRepository) Delete(code string) error {
+func (r *ForgotPassRepository) Delete(code int) error {
 	query := `DELETE FROM "FORGOT_PASS" WHERE "code" = $1`
 	_, err := r.db.Exec(context.Background(), query, code)
 	return err

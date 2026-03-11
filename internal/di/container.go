@@ -101,7 +101,7 @@ func (c *Container) initDependencies() {
 	c.forgotPassHandler = handlers.NewForgotPassHandler(c.forgotPassService)
 
 	c.landingRepo = repository.NewProductRepository(c.db)
-	c.landingService = service.NewLandingService(c.landingRepo)
+	c.landingService = service.NewLandingService(c.landingRepo, c.reviewRepo)
 	c.landingHandler = handlers.NewLandingHandler(c.landingService)
 }
 

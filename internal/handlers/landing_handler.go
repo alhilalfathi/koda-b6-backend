@@ -34,3 +34,20 @@ func (h *LandingHandler) RecommendedProducts(ctx *gin.Context) {
 		Results: products,
 	})
 }
+
+func (h *LandingHandler) GetAllReview(ctx *gin.Context) {
+	reviews, err := h.service.GetAllReviews()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Show products success",
+		Results: reviews,
+	})
+}

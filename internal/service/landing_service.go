@@ -6,15 +6,21 @@ import (
 )
 
 type LandingService struct {
-	repo *repository.ProductRepository
+	repo     *repository.ProductRepository
+	rpReview *repository.ReviewRepository
 }
 
-func NewLandingService(rp *repository.ProductRepository) *LandingService {
+func NewLandingService(rp *repository.ProductRepository, rv *repository.ReviewRepository) *LandingService {
 	return &LandingService{
-		repo: rp,
+		repo:     rp,
+		rpReview: rv,
 	}
 }
 
 func (s *LandingService) RecommendedProducts() ([]models.Product, error) {
 	return s.repo.RecomendedProducts()
+}
+
+func (s *LandingService) GetAllReviews() ([]models.Review, error) {
+	return s.rpReview.GetAllReviews()
 }

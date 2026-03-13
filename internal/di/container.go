@@ -43,6 +43,10 @@ type Container struct {
 	cartService *service.CartService
 	cartHandler *handlers.CartHandler
 
+	proCatRepo    *repository.ProductCategoryRepository
+	proCatService *service.ProductCategoryService
+	proCatHandler *handlers.ProductCategoryHandler
+
 	trxRepo    *repository.TransactionRepository
 	trxService *service.TransactionService
 	trxHandler *handlers.TransactionHandler
@@ -100,6 +104,10 @@ func (c *Container) initDependencies() {
 	c.cartService = service.NewCartService(c.cartRepo)
 	c.cartHandler = handlers.NewCartHandler(c.cartService)
 
+	c.proCatRepo = repository.NewProductCategoryRepository(c.db)
+	c.proCatService = service.NewProductCategoryService(c.proCatRepo)
+	c.proCatHandler = handlers.NewProductCategoryHandler(c.proCatService)
+
 	c.trxRepo = repository.NewTransactionRepository(c.db)
 	c.trxService = service.NewTransactionService(c.trxRepo)
 	c.trxHandler = handlers.NewTransactionHandler(c.trxService)
@@ -143,6 +151,10 @@ func (c *Container) DiscountHandler() *handlers.DiscountHandler {
 
 func (c *Container) CartHandler() *handlers.CartHandler {
 	return c.cartHandler
+}
+
+func (c *Container) ProCatHandler() *handlers.ProductCategoryHandler {
+	return c.proCatHandler
 }
 
 func (c *Container) TransactionHandler() *handlers.TransactionHandler {

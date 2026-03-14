@@ -20,6 +20,7 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 	discountHandler := container.DiscountHandler()
 	carthandler := container.CartHandler()
 	proCatHandler := container.ProCatHandler()
+	proVarHandler := container.ProVarHandler()
 	trxHandler := container.TransactionHandler()
 	forgotPassHandler := container.ForgotPassHandler()
 	landingHandler := container.LandingHandler()
@@ -111,6 +112,13 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 			proCat.POST("/", proCatHandler.Create)
 			proCat.GET("/", proCatHandler.GetAll)
 			proCat.GET("/:id", proCatHandler.GetById)
+		}
+
+		proVar := a.Group("/product_variant")
+		{
+			proVar.POST("/", proVarHandler.Create)
+			proVar.GET("/", proVarHandler.GetAll)
+			proVar.GET("/:id", proVarHandler.GetById)
 		}
 
 		trx := a.Group("/transaction")

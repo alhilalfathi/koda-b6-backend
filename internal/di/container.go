@@ -51,6 +51,10 @@ type Container struct {
 	proVarService *service.ProductVariantService
 	proVarHandler *handlers.ProductVariantHandler
 
+	proSizRepo    *repository.ProductSizeRepository
+	proSizService *service.ProductSizeService
+	proSizHandler *handlers.ProductSizeHandler
+
 	trxRepo    *repository.TransactionRepository
 	trxService *service.TransactionService
 	trxHandler *handlers.TransactionHandler
@@ -116,6 +120,10 @@ func (c *Container) initDependencies() {
 	c.proVarService = service.NewProductVariantService(c.proVarRepo)
 	c.proVarHandler = handlers.NewProductVariantHandler(c.proVarService)
 
+	c.proSizRepo = repository.NewProductSizeRepository(c.db)
+	c.proSizService = service.NewProductSizeService(c.proSizRepo)
+	c.proSizHandler = handlers.NewProductSizeHandler(c.proSizService)
+
 	c.trxRepo = repository.NewTransactionRepository(c.db)
 	c.trxService = service.NewTransactionService(c.trxRepo)
 	c.trxHandler = handlers.NewTransactionHandler(c.trxService)
@@ -167,6 +175,10 @@ func (c *Container) ProCatHandler() *handlers.ProductCategoryHandler {
 
 func (c *Container) ProVarHandler() *handlers.ProductVariantHandler {
 	return c.proVarHandler
+}
+
+func (c *Container) ProSizHandler() *handlers.ProductSizeHandler {
+	return c.proSizHandler
 }
 
 func (c *Container) TransactionHandler() *handlers.TransactionHandler {

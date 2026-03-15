@@ -63,6 +63,10 @@ type Container struct {
 	trxService *service.TransactionService
 	trxHandler *handlers.TransactionHandler
 
+	trpRepo    *repository.TransactionProductRepository
+	trpService *service.TransactionProductService
+	trpHandler *handlers.TransactionProductHandler
+
 	forgotPassRepo    *repository.ForgotPassRepository
 	forgotPassService *service.ForgotPassService
 	forgotPassHandler *handlers.ForgotPassHandler
@@ -136,6 +140,10 @@ func (c *Container) initDependencies() {
 	c.trxService = service.NewTransactionService(c.trxRepo)
 	c.trxHandler = handlers.NewTransactionHandler(c.trxService)
 
+	c.trpRepo = repository.NewTransactionProductRepository(c.db)
+	c.trpService = service.NewTransactionProductService(c.trpRepo)
+	c.trpHandler = handlers.NewTransactionProductHandler(c.trpService)
+
 	c.forgotPassRepo = repository.NewForgotPassRepository(c.db)
 	c.forgotPassService = service.NewForgotPassService(c.forgotPassRepo, c.userRepo)
 	c.forgotPassHandler = handlers.NewForgotPassHandler(c.forgotPassService)
@@ -195,6 +203,10 @@ func (c *Container) ProDisHandler() *handlers.ProductDiscountHandler {
 
 func (c *Container) TransactionHandler() *handlers.TransactionHandler {
 	return c.trxHandler
+}
+
+func (c *Container) TransactionProductHandler() *handlers.TransactionProductHandler {
+	return c.trpHandler
 }
 
 func (c *Container) ForgotPassHandler() *handlers.ForgotPassHandler {

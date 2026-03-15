@@ -24,6 +24,7 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 	proSizHandler := container.ProSizHandler()
 	proDisHandler := container.ProDisHandler()
 	trxHandler := container.TransactionHandler()
+	trpHandler := container.TransactionProductHandler()
 	forgotPassHandler := container.ForgotPassHandler()
 	landingHandler := container.LandingHandler()
 
@@ -142,6 +143,13 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 			trx.POST("/", trxHandler.CreateTransaction)
 			trx.GET("/", trxHandler.GetAllTransaction)
 			trx.GET("/:id", trxHandler.GetTransactionById)
+		}
+
+		trp := a.Group("/transaction")
+		{
+			trp.POST("/", trpHandler.Create)
+			trp.GET("/", trpHandler.GetAll)
+			trp.GET("/:id", trpHandler.GetById)
 		}
 	}
 

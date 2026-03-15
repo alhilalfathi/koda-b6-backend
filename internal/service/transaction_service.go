@@ -21,7 +21,7 @@ func (s *TransactionService) CreateTransaction(req *models.CreateTransactionRequ
 		TrxId:       req.TrxId,
 		UserId:      req.UserId,
 		Fullname:    req.Fullname,
-		Email:       req.Fullname,
+		Email:       req.Email,
 		Address:     req.Address,
 		Delivery:    req.Delivery,
 		DeliveryFee: req.DeliveryFee,

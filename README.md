@@ -10,4 +10,4 @@ Backend REST API Coffee Shop ecommerce app made using go programming language.
 
 # How to run
 - Clone repo
-- Run command: go run cmd/main.go 
+- Run command: go run cmd/main.go

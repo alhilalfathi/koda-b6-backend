@@ -3,6 +3,8 @@ package routes
 import (
 	"koda-b6-backend/internal/di"
 	"koda-b6-backend/internal/middleware"
+	"koda-b6-backend/internal/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -153,6 +155,12 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 		}
 	}
 
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, models.Response{
+			Success: true,
+			Message: "Backend running well",
+		})
+	})
 	r.GET("/recommended-products", landingHandler.RecommendedProducts)
 	r.GET("/reviews", landingHandler.GetAllReview)
 }

@@ -5,6 +5,7 @@ jobs:
   Build-and-Run:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: write
     steps:
       - name: Gathering source code

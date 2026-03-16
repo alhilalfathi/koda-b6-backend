@@ -145,7 +145,7 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 			trx.GET("/:id", trxHandler.GetTransactionById)
 		}
 
-		trp := a.Group("/transaction")
+		trp := a.Group("/transaction-product")
 		{
 			trp.POST("/", trpHandler.Create)
 			trp.GET("/", trpHandler.GetAll)

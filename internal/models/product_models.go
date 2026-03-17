@@ -7,6 +7,7 @@ type Product struct {
 	Price       int    `json:"price" db:"price"`
 	Stock       int    `json:"stock" db:"stock"`
 	Images      string `json:"path" db:"path"`
+	CountReview int    `db:"total_review"`
 }
 type CreateProductRequest struct {
 	ProductName string `json:"product_name" db:"product_name"`

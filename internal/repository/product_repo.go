@@ -71,7 +71,7 @@ func (r *ProductRepository) Delete(id int) error {
 
 func (r *ProductRepository) RecomendedProducts() ([]models.Product, error) {
 	query := `
-		SELECT "PRODUCT"."id", "product_name", "product_desc", "price", "stock", "path", COUNT("product_id") AS "total_review"
+		SELECT "PRODUCT"."id", "product_name", "product_desc", "price", "stock", "path", COUNT("REVIEWS"."product_id") AS "total_review"
 		FROM "PRODUCT"
 		JOIN "REVIEWS" ON "REVIEWS"."product_id" = "PRODUCT"."id"
 		JOIN "PRODUCT_IMAGES" ON "PRODUCT_IMAGES"."product_id" = "PRODUCT"."id"

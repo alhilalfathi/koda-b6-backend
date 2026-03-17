@@ -69,7 +69,7 @@ func (r *ProductRepository) Delete(id int) error {
 	return err
 }
 
-func (r *ProductRepository) RecomendedProducts() ([]models.Product, error) {
+func (r *ProductRepository) RecomendedProducts() ([]models.RecommendedProduct, error) {
 	query := `
 		SELECT "PRODUCT"."id", "product_name", "product_desc", "price", "stock", "path", COUNT("REVIEWS"."product_id") AS "total_review"
 		FROM "PRODUCT"
@@ -85,7 +85,7 @@ func (r *ProductRepository) RecomendedProducts() ([]models.Product, error) {
 		return nil, err
 	}
 
-	products, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Product])
+	products, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.RecommendedProduct])
 	if err != nil {
 		return nil, err
 	}

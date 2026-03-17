@@ -17,7 +17,7 @@ func NewLandingService(rp *repository.ProductRepository, rv *repository.ReviewRe
 	}
 }
 
-func (s *LandingService) RecommendedProducts() ([]models.Product, error) {
+func (s *LandingService) RecommendedProducts() ([]models.RecommendedProduct, error) {
 	return s.repo.RecomendedProducts()
 }
 

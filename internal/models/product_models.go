@@ -6,8 +6,6 @@ type Product struct {
 	Desc        string `json:"product_desc" db:"product_desc"`
 	Price       int    `json:"price" db:"price"`
 	Stock       int    `json:"stock" db:"stock"`
-	Images      string `json:"path" db:"path"`
-	CountReview int    `db:"total_review"`
 }
 type CreateProductRequest struct {
 	ProductName string `json:"product_name" db:"product_name"`
@@ -20,4 +18,13 @@ type UpdateProductRequest struct {
 	Desc        string `json:"product_desc" db:"product_desc"`
 	Price       int    `json:"price" db:"price"`
 	Stock       int    `json:"stock" db:"stock"`
+}
+type RecommendedProduct struct {
+	Id          int    `json:"product_id" db:"id"`
+	ProductName string `json:"product_name" db:"product_name"`
+	Desc        string `json:"product_desc" db:"product_desc"`
+	Price       int    `json:"price" db:"price"`
+	Stock       int    `json:"stock" db:"stock"`
+	Images      string `json:"path" db:"path"`
+	CountReview int    `db:"total_review"`
 }

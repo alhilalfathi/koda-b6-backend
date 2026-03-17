@@ -75,7 +75,7 @@ func (r *ProductRepository) RecomendedProducts() ([]models.Product, error) {
 		FROM "PRODUCT"
 		JOIN "REVIEWS" ON "REVIEWS"."product_id" = "PRODUCT"."id"
 		JOIN "PRODUCT_IMAGES" ON "PRODUCT_IMAGES"."product_id" = "PRODUCT"."id"
-		GROUP BY "PRODUCT"."id"
+		GROUP BY "PRODUCT"."id", "PRODUCT_IMAGES"."path"
 		ORDER BY "total_review" DESC
 		LIMIT 4
 	`

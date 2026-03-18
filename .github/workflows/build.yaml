@@ -46,5 +46,5 @@ jobs:
           script: |
             cd server-hilal
             docker compose pull
-            docker run --rm --network=server-hilal_default migrate/migrate:latest -source github://alhilalfathi:${{secrets.GITHUB_TOKEN}}@alhilalfathi/koda-b6-backend/migrations -database postgresql://postgres:1@pg:5432/postgres?sslmode=disable up
+            docker run --rm --network=server-hilal_webapps migrate/migrate:latest -source github://alhilalfathi:${{secrets.GITHUB_TOKEN}}@alhilalfathi/koda-b6-backend/migrations -database postgresql://postgres:1@pg:5432/postgres?sslmode=disable up
             docker compose up backend -d

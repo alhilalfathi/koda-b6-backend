@@ -147,7 +147,7 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 			trp.GET("/:id", trpHandler.GetById)
 		}
 	}
-	auth := a.Group("/auth")
+	auth := r.Group("/auth")
 	{
 		auth.POST("/register", userHandler.Create)
 		auth.POST("/login", userHandler.Login)

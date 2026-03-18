@@ -32,13 +32,6 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 
 	a := r.Group("/admin")
 	{
-		auth := a.Group("/auth")
-		{
-			auth.POST("/register", userHandler.Create)
-			auth.POST("/login", userHandler.Login)
-			auth.POST("/forgot-password", forgotPassHandler.RequestForgotPass)
-			auth.PATCH("/forgot-password", forgotPassHandler.ResetPass)
-		}
 
 		users := a.Group("/users", middleware.AuthMiddleware())
 		{
@@ -153,6 +146,13 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 			trp.GET("/", trpHandler.GetAll)
 			trp.GET("/:id", trpHandler.GetById)
 		}
+	}
+	auth := a.Group("/auth")
+	{
+		auth.POST("/register", userHandler.Create)
+		auth.POST("/login", userHandler.Login)
+		auth.POST("/forgot-password", forgotPassHandler.RequestForgotPass)
+		auth.PATCH("/forgot-password", forgotPassHandler.ResetPass)
 	}
 
 	r.GET("/", func(ctx *gin.Context) {

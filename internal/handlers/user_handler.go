@@ -125,7 +125,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := h.service.Login(req)
+	user, token, err := h.service.Login(req)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, models.Response{
 			Success: false,
@@ -137,7 +137,10 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Login success",
-		Results: models.LoginUserResponse{Token: token},
+		Results: models.LoginUserResponse{
+			Token:    token,
+			Fullname: user.FullName,
+		},
 	})
 }
 

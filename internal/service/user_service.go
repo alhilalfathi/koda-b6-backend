@@ -61,26 +61,26 @@ func (s *UserService) Register(req *models.CreateUserRequest) error {
 	return s.repo.Create(newUser)
 }
 
-func (s *UserService) Login(req models.LoginUserRequest) (string, error) {
+func (s *UserService) Login(req models.LoginUserRequest) (*models.Users, string, error) {
 	user, err := s.repo.GetByEmail(req.Email)
 	if err != nil {
-		return "", errors.New("Invalid email or password")
+		return nil, "", errors.New("Invalid email or password")
 	}
 
 	ok := lib.VerifyPassword(req.Password, user.Password)
 	if !ok {
-		return "", errors.New("Invalid Email or Password")
+		return nil, "", errors.New("Invalid Email or Password")
 	}
 
 	if ok {
 		token, err := lib.GenerateToken(user.Id)
 		if err != nil {
-			return "", err
+			return nil, "", err
 		}
 
-		return token, nil
+		return user, token, nil
 	}
-	return "", err
+	return nil, "", err
 }
 
 func (s *UserService) Update(email string, req *models.UpdateUserRequest) (*models.Users, error) {

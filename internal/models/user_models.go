@@ -17,7 +17,8 @@ type LoginUserRequest struct {
 	Password string `json:"password" db:"password" binding:"required,min=4"`
 }
 type LoginUserResponse struct {
-	Token string `json:"token"`
+	Token    string `json:"token"`
+	Fullname string `json:"fullname"`
 }
 type UpdateUserRequest struct {
 	FullName string `json:"fullname" db:"fullname"`

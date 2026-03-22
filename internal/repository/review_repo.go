@@ -18,7 +18,7 @@ func NewReviewRepository(d *pgx.Conn) *ReviewRepository {
 }
 
 func (r *ReviewRepository) CreateReview(review models.Review) error {
-	query := `INSERT INTO "PRODUCT" ("user_id", "product_id", "messages", "rating") VALUES ($1,$2,$3,$4)`
+	query := `INSERT INTO "REVIEWS" ("user_id", "product_id", "messages", "rating") VALUES ($1,$2,$3,$4)`
 
 	_, err := r.db.Exec(context.Background(), query, review.UserId, review.ProductId, review.Messages, review.Rating)
 

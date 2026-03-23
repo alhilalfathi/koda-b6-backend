@@ -12,6 +12,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title Backend Coffeeshop
+// @version 1.0.0
+// @description this is basic bakcend apps with DI
+// @host localhost:8888
+// @BasePath /
 func main() {
 
 	godotenv.Load()

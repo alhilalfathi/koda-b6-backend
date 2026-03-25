@@ -20,13 +20,13 @@ func NewProductHandler(s *service.ProductService) *ProductHandler {
 }
 
 // CreateProduct godoc
-// @Summary      Create product
-// @Description  Create a Product
-// @Tags         Product
-// @Produce      json
-// @Success      200      {object}  models.CreateProductRequest
-// @Failure      500      {object}  models.CreateProductRequest
-// @Router       /admin/products [post]
+// @Summary Create product
+// @Description Create a Product
+// @Tags Product
+// @Produce json
+// @Success 200 {object}  models.CreateProductRequest
+// @Failure 500 {object}  models.CreateProductRequest
+// @Router  /admin/products [post]
 func (h *ProductHandler) CreateProduct(ctx *gin.Context) {
 	var req models.CreateProductRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -52,13 +52,13 @@ func (h *ProductHandler) CreateProduct(ctx *gin.Context) {
 }
 
 // GetProducts godoc
-// @Summary      Get products
-// @Description  Show All Products
-// @Tags         Products
-// @Produce      json
-// @Success      200      {object}  models.Product
-// @Failure      500      {object}  models.Product
-// @Router       /admin/products [get]
+// @Summary Get products
+// @Description Show All Products
+// @Tags Products
+// @Produce json
+// @Success 200 {object}  models.Product
+// @Failure 500 {object}  models.Product
+// @Router /admin/products [get]
 func (h *ProductHandler) GetAllProduct(ctx *gin.Context) {
 	products, err := h.service.GetAllProducts()
 	if err != nil {
@@ -76,6 +76,16 @@ func (h *ProductHandler) GetAllProduct(ctx *gin.Context) {
 	})
 }
 
+// GetProductById godoc
+// @Summary Get product data by id
+// @Description show product data by searched id
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID"
+// @Success 200 {object} models.Product
+// @Failure 500 {object}  models.Product
+// @Router /admin/product/{id} [get]
 func (h *ProductHandler) GetProductById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 
@@ -103,6 +113,16 @@ func (h *ProductHandler) GetProductById(ctx *gin.Context) {
 	})
 }
 
+// UpdateProductById godoc
+// @Summary Update product data by id
+// @Description update product data by searched id
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID"
+// @Success 200 {object} models.Product
+// @Failure 500 {object}  models.Product
+// @Router /admin/product/{id} [patch]
 func (h *ProductHandler) Update(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -137,6 +157,16 @@ func (h *ProductHandler) Update(ctx *gin.Context) {
 	})
 }
 
+// DeleteProduct godoc
+// @Summary Delete product data by id
+// @Description remove product data by searched id
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID"
+// @Success 200 {object} models.Product
+// @Failure 500 {object}  models.Product
+// @Router /admin/product/{id} [delete]
 func (h *ProductHandler) Delete(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

@@ -18,7 +18,14 @@ func NewUserHandler(sr *service.UserService) *UserHandler {
 	}
 }
 
-// get all user
+// GetUsers godoc
+// @Summary Get all user account
+// @Description Show All User
+// @Tags User
+// @Produce json
+// @Success 200 {object}  models.User
+// @Failure 500 {object}  models.User
+// @Router /admin/users [get]
 func (h *UserHandler) GetAll(ctx *gin.Context) {
 	users, err := h.service.GetAll()
 
@@ -37,7 +44,16 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 	})
 }
 
-// get user by id
+// GetUsersByID godoc
+// @Summary Get user account by id
+// @Description Show User by searched id
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} models.User
+// @Failure 500 {object}  models.User
+// @Router /admin/users/{id} [get]
 func (h *UserHandler) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	user, err := h.service.GetById(id)
@@ -63,7 +79,16 @@ func (h *UserHandler) GetById(ctx *gin.Context) {
 	})
 }
 
-// get user by email
+// GetUsersByEmail godoc
+// @Summary Get user account by email
+// @Description Show User by searched email
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path string true "User Email"
+// @Success 200 {object} models.User
+// @Failure 500 {object}  models.User
+// @Router /admin/users/email/{email} [get]
 func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 	email := ctx.Param("email")
 	user, err := h.service.GetByEmail(email)
@@ -89,7 +114,14 @@ func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 	})
 }
 
-// create user
+// UserRegister godoc
+// @Summary Register user
+// @Description Create an user account
+// @Tags User
+// @Produce json
+// @Success 200 {object}  models.CreateUserRequest
+// @Failure 500 {object}  models.CreateUserRequest
+// @Router  /register [post]
 func (h *UserHandler) Create(ctx *gin.Context) {
 	var newUser models.CreateUserRequest
 

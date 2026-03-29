@@ -26,7 +26,17 @@ func (r *ReviewRepository) CreateReview(review models.Review) error {
 }
 
 func (r *ReviewRepository) GetAllReviews() ([]models.Review, error) {
-	query := `SELECT "id", "user_id", "product_id", "messages", "rating" FROM "REVIEWS"`
+	query := `
+        SELECT 
+            r."id", 
+            r."user_id", 
+            r."product_id", 
+            r."messages", 
+            r."rating",
+            pic."path"
+        FROM "REVIEWS" r
+        LEFT JOIN "USER_PICTURE" pic ON pic."user_id" = r."user_id"
+    `
 
 	rows, err := r.db.Query(context.Background(), query)
 	if err != nil {

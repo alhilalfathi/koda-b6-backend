@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"koda-b6-backend/internal/lib"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/repository"
 	"math/rand"
@@ -47,7 +48,13 @@ func (s *ForgotPassService) ResetPass(req *models.UpdateForgotPassRequest) error
 	if err != nil {
 		return errors.New("Email not found")
 	}
-	user.Password = req.Password
+
+	hashed, err := lib.HashPassword(req.Password)
+	if err != nil {
+		return err
+	}
+
+	user.Password = hashed
 
 	s.userRepo.Update(req.Email, user)
 

@@ -18,6 +18,9 @@ func NewForgotPassRepository(d *pgx.Conn) *ForgotPassRepository {
 }
 
 func (r *ForgotPassRepository) CreateForgotPass(p models.ForgotPass) error {
+	deleteQuery := `DELETE FROM "FORGOT_PASS" WHERE email = $1`
+	r.db.Exec(context.Background(), deleteQuery, p.Email)
+
 	query := `INSERT INTO "FORGOT_PASS" (email, code) VALUES ($1,$2)`
 
 	_, err := r.db.Exec(context.Background(), query, p.Email, p.Code)
@@ -26,7 +29,7 @@ func (r *ForgotPassRepository) CreateForgotPass(p models.ForgotPass) error {
 }
 
 func (r *ForgotPassRepository) GetByEmailCode(email string, code int) (*models.ForgotPass, error) {
-	query := `SELECT id, email, code FROM "FORGOT_PASS" WHERE email=$1 AND code=$2`
+	query := `SELECT id, email, code FROM "FORGOT_PASS" WHERE LOWER(email)=LOWER($1) AND code=$2`
 
 	rows, err := r.db.Query(context.Background(), query, email, code)
 	if err != nil {

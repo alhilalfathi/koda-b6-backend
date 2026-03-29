@@ -7,6 +7,7 @@ type Review struct {
 	Messages  string `json:"messages" db:"messages"`
 	Rating    int    `json:"rating" db:"rating"`
 	Path      string `json:"path" db:"path"`
+	Fullname  string `json:"fullname" db:"fullname"`
 }
 
 type CreateReviewRequest struct {

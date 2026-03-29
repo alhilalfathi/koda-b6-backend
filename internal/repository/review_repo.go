@@ -33,9 +33,11 @@ func (r *ReviewRepository) GetAllReviews() ([]models.Review, error) {
             r."product_id", 
             r."messages", 
             r."rating",
-            pic."path"
+            pic."path",
+			u."fullname"
         FROM "REVIEWS" r
         LEFT JOIN "USER_PICTURE" pic ON pic."user_id" = r."user_id"
+		LEFT JOIN "USER" u ON u."id" = r."user_id"
     `
 
 	rows, err := r.db.Query(context.Background(), query)

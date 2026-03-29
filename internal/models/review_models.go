@@ -6,6 +6,7 @@ type Review struct {
 	ProductId int    `json:"product_id" db:"product_id"`
 	Messages  string `json:"messages" db:"messages"`
 	Rating    int    `json:"rating" db:"rating"`
+	Path      string `json:"path" db:"path"`
 }
 
 type CreateReviewRequest struct {

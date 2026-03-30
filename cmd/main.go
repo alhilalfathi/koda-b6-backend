@@ -25,7 +25,15 @@ func main() {
 	// if err != nil {
 	// 	fmt.Println("Failed to parse config")
 	// }
-	config, err := pgxpool.ParseConfig("")
+
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/postgres?sslmode=disable",
+		os.Getenv("PGUSER"),
+		os.Getenv("PGPASSWORD"),
+		os.Getenv("PGHOST"),
+		os.Getenv("PGPORT"),
+	)
+
+	config, err := pgxpool.ParseConfig(dbURL)
 	if err != nil {
 		fmt.Printf("Failed to parse config: %v\n", err)
 		os.Exit(1)

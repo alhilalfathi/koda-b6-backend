@@ -45,6 +45,8 @@ func (r *ReviewRepository) GetAllReviews() ([]models.Review, error) {
 		return nil, err
 	}
 
+	defer rows.Close()
+
 	reviews, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Review])
 	if err != nil {
 		return nil, err

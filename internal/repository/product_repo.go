@@ -26,7 +26,20 @@ func (r *ProductRepository) CreateProduct(product models.Product) error {
 }
 
 func (r *ProductRepository) GetAllProducts() ([]models.Product, error) {
-	query := `SELECT "id", "product_name", "product_desc", "price", "stock" FROM "PRODUCT"`
+	query := `
+        SELECT 
+            p."id", 
+            p."product_name", 
+            p."product_desc", 
+            p."price", 
+            p."stock", 
+            img."path", 
+            c."category" 
+        FROM "PRODUCT" p
+        LEFT JOIN "PRODUCT_IMAGES" img ON img."product_id" = p."id"
+        JOIN "PRODUCT_CATEGORY" pcat ON pcat."product_id" = p."id"
+        JOIN "CATEGORY" c ON c."id" = pcat."category_id"
+    `
 
 	rows, err := r.db.Query(context.Background(), query)
 	if err != nil {

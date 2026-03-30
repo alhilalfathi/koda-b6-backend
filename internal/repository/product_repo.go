@@ -33,6 +33,8 @@ func (r *ProductRepository) GetAllProducts() ([]models.Product, error) {
 		return nil, err
 	}
 
+	defer rows.Close()
+
 	products, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Product])
 	if err != nil {
 		return nil, err
@@ -84,6 +86,8 @@ func (r *ProductRepository) RecomendedProducts() ([]models.RecommendedProduct, e
 	if err != nil {
 		return nil, err
 	}
+
+	defer rows.Close()
 
 	products, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.RecommendedProduct])
 	if err != nil {

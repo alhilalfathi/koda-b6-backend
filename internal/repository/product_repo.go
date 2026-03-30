@@ -39,7 +39,7 @@ func (r *ProductRepository) GetAllProducts() ([]models.Product, error) {
         LEFT JOIN "PRODUCT_IMAGES" img ON img."product_id" = p."id"
         JOIN "PRODUCT_CATEGORY" pcat ON pcat."product_id" = p."id"
         JOIN "CATEGORY" c ON c."id" = pcat."category_id"
-		GROUP BY p."id"
+		GROUP BY p."id", img."path"
     `
 
 	rows, err := r.db.Query(context.Background(), query)

@@ -166,8 +166,8 @@ func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
 
 	products := r.Group("/products")
 	{
-		products.POST("/", productHandler.CreateProduct)
-		products.GET("/", productHandler.GetAllProduct)
+		products.POST("", productHandler.CreateProduct)
+		products.GET("", productHandler.GetAllProduct)
 		products.GET("/:id", productHandler.GetProductById)
 	}
 }

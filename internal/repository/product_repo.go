@@ -33,13 +33,13 @@ func (r *ProductRepository) GetAllProducts() ([]models.Product, error) {
             p."product_desc", 
             p."price", 
             p."stock", 
-            img."path", 
-            c."category" 
+            MIN(img."path") AS "path", 
+			string_agg( c."category" , ',' ) AS "category"
         FROM "PRODUCT" p
         LEFT JOIN "PRODUCT_IMAGES" img ON img."product_id" = p."id"
         JOIN "PRODUCT_CATEGORY" pcat ON pcat."product_id" = p."id"
         JOIN "CATEGORY" c ON c."id" = pcat."category_id"
-		GROUP BY p."id", img."path", c."category"
+		GROUP BY p."id", p."product_name", p."product_desc", p."price", p."stock"
     `
 
 	rows, err := r.db.Query(context.Background(), query)

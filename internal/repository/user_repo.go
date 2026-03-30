@@ -6,13 +6,14 @@ import (
 	"strconv"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type UserRepository struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewUserRepository(d *pgx.Conn) *UserRepository {
+func NewUserRepository(d *pgxpool.Pool) *UserRepository {
 	return &UserRepository{
 		db: d,
 	}

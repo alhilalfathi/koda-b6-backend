@@ -5,13 +5,14 @@ import (
 	"koda-b6-backend/internal/models"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type DiscountRepository struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewDiscountRepository(d *pgx.Conn) *DiscountRepository {
+func NewDiscountRepository(d *pgxpool.Pool) *DiscountRepository {
 	return &DiscountRepository{
 		db: d,
 	}

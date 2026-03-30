@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
 
@@ -21,21 +21,40 @@ func main() {
 
 	godotenv.Load()
 
-	connConfig, err := pgx.ParseConfig("")
+	// connConfig, err := pgx.ParseConfig("")
+	// if err != nil {
+	// 	fmt.Println("Failed to parse config")
+	// }
+	config, err := pgxpool.ParseConfig("")
 	if err != nil {
-		fmt.Println("Failed to parse config")
+		fmt.Printf("Failed to parse config: %v\n", err)
+		os.Exit(1)
 	}
 
-	conn, err := pgx.Connect(context.Background(), connConfig.ConnString())
+	config.MaxConns = 20
+	config.MinConns = 5
+
+	//conn, err := pgx.Connect(context.Background(), connConfig.ConnString()) //bisa pke pgxpool biar ga conn busy
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		fmt.Println("Failed to connecting db")
+		os.Exit(1)
+	}
+
+	defer pool.Close()
+
+	err = pool.Ping(context.Background())
+	if err != nil {
+		fmt.Printf("Failed to ping database: %v\n", err)
+		os.Exit(1)
 	}
 
 	r := gin.Default()
 
 	r.Use(middleware.CorsMiddleware())
 
-	routes.SetupRoutes(r, conn)
+	// routes.SetupRoutes(r, conn)
+	routes.SetupRoutes(r, pool)
 
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

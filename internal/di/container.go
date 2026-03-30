@@ -5,11 +5,11 @@ import (
 	"koda-b6-backend/internal/repository"
 	"koda-b6-backend/internal/service"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Container struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 
 	userRepo    *repository.UserRepository
 	userService *service.UserService
@@ -76,7 +76,7 @@ type Container struct {
 	landingHandler *handlers.LandingHandler
 }
 
-func NewContainer(db *pgx.Conn) *Container {
+func NewContainer(db *pgxpool.Pool) *Container {
 
 	container := Container{
 		db: db,

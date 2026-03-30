@@ -5,13 +5,14 @@ import (
 	"koda-b6-backend/internal/models"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type SizeRepository struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewSizeRepository(d *pgx.Conn) *SizeRepository {
+func NewSizeRepository(d *pgxpool.Pool) *SizeRepository {
 	return &SizeRepository{
 		db: d,
 	}

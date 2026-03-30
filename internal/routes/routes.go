@@ -7,10 +7,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func SetupRoutes(r *gin.Engine, conn *pgx.Conn) {
+func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 	container := di.NewContainer(conn)
 
 	userHandler := container.UserHandler()

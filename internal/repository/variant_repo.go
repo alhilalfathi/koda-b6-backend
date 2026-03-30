@@ -5,13 +5,14 @@ import (
 	"koda-b6-backend/internal/models"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type VariantRepository struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewVariantRepository(d *pgx.Conn) *VariantRepository {
+func NewVariantRepository(d *pgxpool.Pool) *VariantRepository {
 	return &VariantRepository{
 		db: d,
 	}

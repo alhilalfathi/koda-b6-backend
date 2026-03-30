@@ -5,13 +5,14 @@ import (
 	"koda-b6-backend/internal/models"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type ForgotPassRepository struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
-func NewForgotPassRepository(d *pgx.Conn) *ForgotPassRepository {
+func NewForgotPassRepository(d *pgxpool.Pool) *ForgotPassRepository {
 	return &ForgotPassRepository{
 		db: d,
 	}

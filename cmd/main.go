@@ -33,17 +33,17 @@ func main() {
 		os.Getenv("PGPORT"),
 	)
 
-	// config, err := pgxpool.ParseConfig(dbURL)
-	// if err != nil {
-	// 	fmt.Printf("Failed to parse config: %v\n", err)
-	// 	os.Exit(1)
-	// }
+	config, err := pgxpool.ParseConfig(dbURL)
+	if err != nil {
+		fmt.Printf("Failed to parse config: %v\n", err)
+		os.Exit(1)
+	}
 
-	// config.MaxConns = 20
-	// config.MinConns = 5
+	config.MaxConns = 20
+	config.MinConns = 5
 
 	//conn, err := pgx.Connect(context.Background(), connConfig.ConnString()) //bisa pke pgxpool biar ga conn busy
-	pool, err := pgxpool.New(context.Background(), dbURL)
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		fmt.Println("Failed to connecting db")
 		os.Exit(1)

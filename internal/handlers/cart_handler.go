@@ -29,6 +29,17 @@ func (h *CartHandler) CreateCart(ctx *gin.Context) {
 		return
 	}
 
+	userId, exists := ctx.Get("userId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: "Unauthorized: User ID not found",
+		})
+		return
+	}
+
+	req.UserId = userId.(int)
+
 	if err := h.service.CreateCart(&req); err != nil {
 		ctx.JSON(http.StatusInternalServerError, models.Response{
 			Success: false,

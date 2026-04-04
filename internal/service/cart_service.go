@@ -23,8 +23,8 @@ func (s *CartService) CreateCart(req *models.CreateCartRequest) error {
 
 	cart := models.Cart{
 		Quantity:  req.Quantity,
-		SizeId:    req.SizeId,
-		VariantId: req.VariantId,
+		Size:      req.Size,
+		Variant:   req.Variant,
 		UserId:    req.UserId,
 		ProductId: req.ProductId,
 	}
@@ -48,11 +48,11 @@ func (s *CartService) Update(id int, req models.UpdateCartRequest) error {
 	if req.Quantity > 0 {
 		existing.Quantity = req.Quantity
 	}
-	if req.SizeId > 0 {
-		existing.SizeId = req.SizeId
+	if req.Size != "" {
+		existing.Size = req.Size
 	}
-	if req.VariantId > 0 {
-		existing.VariantId = req.VariantId
+	if req.Variant != "" {
+		existing.Variant = req.Variant
 	}
 	if req.UserId > 0 {
 		existing.UserId = req.UserId

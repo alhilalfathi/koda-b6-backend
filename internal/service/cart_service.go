@@ -18,7 +18,10 @@ func NewCartService(rp *repository.CartRepository) *CartService {
 
 func (s *CartService) CreateCart(req *models.CreateCartRequest) error {
 	if req.Quantity <= 0 {
-		return errors.New("Quantity must be greater than zero")
+		return errors.New("quantity must be greater than zero")
+	}
+	if req.UserId <= 0 {
+		return errors.New("invalid user id: user must be logged in")
 	}
 
 	cart := models.Cart{

@@ -170,4 +170,12 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 		products.GET("", productHandler.GetAllProduct)
 		products.GET("/:id", productHandler.GetProductById)
 	}
+
+	cart := r.Group("/cart")
+	{
+		cart.POST("", carthandler.CreateCart)
+		cart.GET("", carthandler.GetAllCarts)
+		cart.PATCH("/:id", carthandler.Update)
+		cart.DELETE("/:id", carthandler.Delete)
+	}
 }

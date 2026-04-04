@@ -96,7 +96,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 			discount.DELETE("/:id", discountHandler.Delete)
 		}
 
-		cart := a.Group("/cart")
+		cart := a.Group("/cart", middleware.AuthMiddleware())
 		{
 			cart.POST("/", carthandler.CreateCart)
 			cart.GET("/", carthandler.GetAllCarts)

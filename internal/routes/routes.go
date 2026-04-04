@@ -133,7 +133,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 			proDis.GET("/:id", proDisHandler.GetById)
 		}
 
-		trx := a.Group("/transaction")
+		trx := a.Group("/transaction", middleware.AuthMiddleware())
 		{
 			trx.POST("/", trxHandler.CreateTransaction)
 			trx.GET("/", trxHandler.GetAllTransaction)

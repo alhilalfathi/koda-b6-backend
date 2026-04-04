@@ -102,7 +102,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 			cart.GET("/", carthandler.GetAllCarts)
 			cart.GET("/:id", carthandler.GetCartById)
 			cart.PATCH("/:id", carthandler.Update)
-			cart.DELETE("/:id", carthandler.Delete)
+			cart.DELETE("/user", carthandler.Delete)
 		}
 
 		proCat := a.Group("/product_category")

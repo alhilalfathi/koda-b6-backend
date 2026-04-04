@@ -9,7 +9,7 @@ type Transaction struct {
 	Email       string `json:"email" db:"email"`
 	Address     string `json:"address" db:"address"`
 	Delivery    string `json:"delivery" db:"delivery"`
-	DeliveryFee string `json:"delivery_fee" db:"delivery_fee"`
+	DeliveryFee int    `json:"delivery_fee" db:"delivery_fee"`
 	Tax         int    `json:"tax" db:"tax"`
 	Total       int    `json:"total" db:"total"`
 	OrderStatus string `json:"status_order" db:"status_order"`
@@ -22,7 +22,7 @@ type CreateTransactionRequest struct {
 	Email       string `json:"email" db:"email"`
 	Address     string `json:"address" db:"address"`
 	Delivery    string `json:"delivery" db:"delivery"`
-	DeliveryFee string `json:"delivery_fee" db:"delivery_fee"`
+	DeliveryFee int    `json:"delivery_fee" db:"delivery_fee"`
 	Tax         int    `json:"tax" db:"tax"`
 	Total       int    `json:"total" db:"total"`
 	OrderStatus string `json:"status_order" db:"status_order"`
@@ -35,7 +35,7 @@ type UpdateTransactionRequest struct {
 	Email       string `json:"email" db:"email"`
 	Address     string `json:"address" db:"address"`
 	Delivery    string `json:"delivery" db:"delivery"`
-	DeliveryFee string `json:"delivery_fee" db:"delivery_fee"`
+	DeliveryFee int    `json:"delivery_fee" db:"delivery_fee"`
 	Tax         int    `json:"tax" db:"tax"`
 	Total       int    `json:"total" db:"total"`
 	OrderStatus string `json:"status_order" db:"status_order"`

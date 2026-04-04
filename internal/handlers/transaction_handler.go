@@ -29,6 +29,16 @@ func (h *TransactionHandler) CreateTransaction(ctx *gin.Context) {
 		return
 	}
 
+	userId, exists := ctx.Get("userId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: "Unauthorized: User session not found",
+		})
+		return
+	}
+	req.UserId = userId.(int)
+
 	if err := h.service.CreateTransaction(&req); err != nil {
 		ctx.JSON(http.StatusInternalServerError, models.Response{
 			Success: false,
@@ -40,6 +50,7 @@ func (h *TransactionHandler) CreateTransaction(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, models.Response{
 		Success: true,
 		Message: "Transaction created",
+		Results: req,
 	})
 }
 

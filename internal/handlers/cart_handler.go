@@ -133,25 +133,22 @@ func (h *CartHandler) Update(ctx *gin.Context) {
 }
 
 func (h *CartHandler) Delete(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, models.Response{
-			Success: false,
-			Message: "Cart id invalid",
-		})
+
+	val, exists := ctx.Get("userId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
 	}
 
-	if err := h.service.Delete(id); err != nil {
-		ctx.JSON(http.StatusInternalServerError, models.Response{
-			Success: false,
-			Message: err.Error(),
-		})
+	userId := val.(int)
+
+	if err := h.service.Delete(userId); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, models.Response{
-		Success: true,
-		Message: "Cart deleted",
+	ctx.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Cart cleared successfully",
 	})
 }

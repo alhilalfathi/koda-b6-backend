@@ -2,7 +2,7 @@ package models
 
 type Transaction struct {
 	Id          int    `json:"transaction_id" db:"id"`
-	TrxId       int    `json:"trx_id" db:"trx_id"`
+	TrxId       string `json:"trx_id" db:"trx_id"`
 	UserId      int    `json:"user_id" db:"user_id"`
 	OrderDate   string `json:"order_date" db:"order_date"`
 	Fullname    string `json:"fullname" db:"fullname"`
@@ -16,7 +16,7 @@ type Transaction struct {
 }
 
 type CreateTransactionRequest struct {
-	TrxId       int    `json:"trx_id" db:"trx_id"`
+	TrxId       string `json:"trx_id" db:"trx_id"`
 	UserId      int    `json:"user_id" db:"user_id"`
 	Fullname    string `json:"fullname" db:"fullname"`
 	Email       string `json:"email" db:"email"`
@@ -29,7 +29,7 @@ type CreateTransactionRequest struct {
 }
 
 type UpdateTransactionRequest struct {
-	TrxId       int    `json:"trx_id" db:"trx_id"`
+	TrxId       string `json:"trx_id" db:"trx_id"`
 	UserId      int    `json:"user_id" db:"user_id"`
 	Fullname    string `json:"fullname" db:"fullname"`
 	Email       string `json:"email" db:"email"`

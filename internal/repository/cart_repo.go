@@ -78,8 +78,8 @@ func (r *CartRepository) GetDetailCartByUserId(userId int) ([]models.CartRespons
         p."price",
         pi."path"
     FROM "CART" c
-    JOIN "PRODUCTS" p ON c."product_id" = p."id"
-	LEFT JOIN "PRODUCTS_IMAGES" pi ON c."product_id" = pi."product_id"
+    JOIN "PRODUCT" p ON c."product_id" = p."id"
+	LEFT JOIN "PRODUCT_IMAGES" pi ON c."product_id" = pi."product_id"
     WHERE c."user_id" = $1
     `
 

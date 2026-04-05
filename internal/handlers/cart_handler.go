@@ -72,29 +72,23 @@ func (h *CartHandler) GetAllCarts(ctx *gin.Context) {
 }
 
 func (h *CartHandler) GetCartById(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, models.Response{
-			Success: false,
-			Message: "Cart id invalid",
-		})
+	val, exists := ctx.Get("userId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, models.Response{Success: false, Message: "Unauthorized"})
 		return
 	}
+	userId := val.(int)
 
-	cart, err := h.service.GetCartById(id)
+	carts, err := h.service.GetCartById(userId)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, models.Response{
-			Success: false,
-			Message: err.Error(),
-		})
+		ctx.JSON(http.StatusInternalServerError, models.Response{Success: false, Message: err.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, models.Response{
 		Success: true,
-		Message: "Cart found",
-		Results: cart,
+		Message: "Your cart list",
+		Results: carts,
 	})
 }
 

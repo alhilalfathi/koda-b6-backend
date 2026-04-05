@@ -99,7 +99,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 		cart := a.Group("/cart", middleware.AuthMiddleware())
 		{
 			cart.POST("/", carthandler.CreateCart)
-			cart.GET("/", carthandler.GetCartById)
+			cart.GET("/", carthandler.GetCartByUser)
 			cart.PATCH("/:id", carthandler.Update)
 			cart.DELETE("/user", carthandler.Delete)
 		}

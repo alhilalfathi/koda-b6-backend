@@ -48,7 +48,11 @@ func (r *CartRepository) GetAllCarts() ([]models.Cart, error) {
 }
 
 func (r *CartRepository) GetCartById(id int) (*models.Cart, error) {
-	query := `SELECT "id", "quantity", "size", "variant", "user_id", "product_id" FROM "CART" WHERE "id" = $1`
+	query := `
+	SELECT "id", "quantity", "size", "variant", "user_id", "product_id" 
+	FROM "CART" 
+	WHERE "id" = $1
+	`
 
 	rows, err := r.db.Query(context.Background(), query, id)
 	if err != nil {
@@ -60,6 +64,39 @@ func (r *CartRepository) GetCartById(id int) (*models.Cart, error) {
 	}
 	return &cart, nil
 }
+
+func (r *CartRepository) GetDetailCartByUserId(userId int) ([]models.CartResponse, error) {
+	query := `
+    SELECT 
+        c."id", 
+        c."quantity", 
+        c."size", 
+        c."variant", 
+        c."user_id", 
+        c."product_id",
+        p."product_name",
+        p."price",
+        pi."path"
+    FROM "CART" c
+    JOIN "PRODUCTS" p ON c."product_id" = p."id"
+	LEFT JOIN "PRODUCTS_IMAGES" pi ON c."product_id" = pi."product_id"
+    WHERE c."user_id" = $1
+    `
+
+	rows, err := r.db.Query(context.Background(), query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	cartItems, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.CartResponse])
+	if err != nil {
+		return nil, err
+	}
+
+	return cartItems, nil
+}
+
 func (r *CartRepository) Update(id int, cart models.Cart) error {
 
 	query := `UPDATE "CART" SET "quantity"=$1, "size"=$2, "variant"=$3, "user_id"=$4, "product_id"=$5 WHERE "id"=$6`

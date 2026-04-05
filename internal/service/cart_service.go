@@ -42,6 +42,19 @@ func (s *CartService) GetCartById(id int) (*models.Cart, error) {
 	return s.repo.GetCartById(id)
 }
 
+func (s *CartService) GetCartDetails(id int) ([]models.CartResponse, error) {
+	items, err := s.repo.GetDetailCartByUserId(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if items == nil {
+		return []models.CartResponse{}, nil
+	}
+
+	return items, nil
+}
+
 func (s *CartService) Update(id int, req models.UpdateCartRequest) error {
 	existing, err := s.repo.GetCartById(id)
 

@@ -92,6 +92,34 @@ func (h *CartHandler) GetCartById(ctx *gin.Context) {
 	})
 }
 
+func (h *CartHandler) GetCartByUser(ctx *gin.Context) {
+	val, exists := ctx.Get("userId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"message": "Unauthorized: User ID not found in context",
+		})
+		return
+	}
+
+	userID := val.(int)
+
+	results, err := h.service.GetCartDetails(userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "Failed to fetch cart details: " + err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Cart details retrieved successfully",
+		"results": results,
+	})
+}
+
 func (h *CartHandler) Update(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

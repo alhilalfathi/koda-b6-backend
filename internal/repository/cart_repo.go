@@ -106,7 +106,7 @@ func (r *CartRepository) Update(id int, cart models.Cart) error {
 }
 
 func (r *CartRepository) Delete(id int) error {
-	query := `DELETE FROM "CART" WHERE "id" = $1`
+	query := `DELETE FROM "CART" WHERE "user_id" = $1`
 	_, err := r.db.Exec(context.Background(), query, id)
 	return err
 }

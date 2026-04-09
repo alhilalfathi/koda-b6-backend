@@ -38,8 +38,11 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 			users.GET("/", userHandler.GetAll)
 			users.GET("/:id", userHandler.GetById)
 			users.GET("/email/:email", userHandler.GetByEmail)
-			users.PATCH("/profile", userHandler.UpdateProfile)
 			users.DELETE("/:id", userHandler.Delete)
+
+			users.GET("/profile", userHandler.GetProfile)
+			users.PATCH("/profile", userHandler.UpdateProfile)
+			users.PATCH("/profile/password", userHandler.ChangePassword)
 		}
 
 		products := a.Group("/products")

@@ -6,7 +6,6 @@ type Users struct {
 	Email    string `json:"email" db:"email"`
 	Password string `json:"password" db:"password"`
 }
-
 type CreateUserRequest struct {
 	FullName string `json:"fullname" db:"fullname"`
 	Email    string `json:"email" db:"email" binding:"required,email"`
@@ -23,5 +22,16 @@ type LoginUserResponse struct {
 type UpdateUserRequest struct {
 	FullName string `json:"fullname" db:"fullname"`
 	Email    string `json:"email" db:"email" binding:"required,email"`
-	Password string `json:"password" db:"password" binding:"required,min=4"`
+	Password string `json:"password" db:"password"`
+}
+type ChangePasswordRequest struct {
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
+type ProfileResponse struct {
+	Id       int    `json:"id" db:"id"`
+	FullName string `json:"fullname" db:"fullname"`
+	Email    string `json:"email" db:"email"`
+	Picture  string `json:"picture" db:"picture"`
 }

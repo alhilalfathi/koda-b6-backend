@@ -84,7 +84,7 @@ func (s *UserService) Login(req models.LoginUserRequest) (*models.Users, string,
 }
 
 func (s *UserService) Update(email string, req *models.UpdateUserRequest) (*models.Users, error) {
-	user, err := s.repo.GetByEmail("email")
+	user, err := s.repo.GetByEmail(email)
 	if err != nil {
 		return nil, errors.New("user not found")
 	}

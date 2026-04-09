@@ -119,3 +119,41 @@ func (r *UserRepository) Delete(email string) error {
 
 	return err
 }
+
+func (r *UserRepository) UpdatePassword(id int, hashedPassword string) error {
+	query := `UPDATE "USER" SET password=$1 WHERE id=$2`
+
+	_, err := r.db.Exec(context.Background(), query, hashedPassword, id)
+	return err
+}
+
+func (r *UserRepository) GetProfile(id int) (*models.ProfileResponse, error) {
+	query := `
+	SELECT 
+		u.id, 
+		u.fullname, 
+		u.email,
+		up.path AS picture
+	FROM "USER" u
+	LEFT JOIN LATERAL (
+		SELECT path 
+		FROM "USER_PICTURE" 
+		WHERE user_id = u.id 
+		ORDER BY id DESC 
+		LIMIT 1
+	) up ON true
+	WHERE u.id = $1
+	`
+
+	rows, err := r.db.Query(context.Background(), query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.ProfileResponse])
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}

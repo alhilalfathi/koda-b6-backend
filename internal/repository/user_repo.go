@@ -91,6 +91,27 @@ func (r *UserRepository) Update(email string, user *models.Users) (*models.Users
 	return &updatedUser, nil
 }
 
+func (r *UserRepository) UpdateById(id int, user *models.Users) (*models.Users, error) {
+	query := `
+		UPDATE "USER"
+		SET fullname=$1, email=$2, password=$3
+		WHERE id=$4
+		RETURNING id, fullname, email, password
+	`
+
+	rows, err := r.db.Query(context.Background(), query, user.FullName, user.Email, user.Password, id)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedUser, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Users])
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedUser, nil
+}
+
 func (r *UserRepository) Delete(email string) error {
 	query := `DELETE FROM "USER" WHERE email=$1`
 

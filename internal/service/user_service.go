@@ -5,6 +5,7 @@ import (
 	"koda-b6-backend/internal/lib"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/repository"
+	"strconv"
 )
 
 type UserService struct {
@@ -113,4 +114,30 @@ func (s *UserService) Delete(email string) error {
 	}
 
 	return s.repo.Delete(email)
+}
+
+func (s *UserService) ChangePassword(id int, oldPass, newPass string) error {
+	user, err := s.repo.GetById(strconv.Itoa(id))
+	if err != nil {
+		return err
+	}
+
+	// compare password lama
+	match := lib.VerifyPassword(oldPass, user.Password)
+	if !match {
+		return errors.New("old password is incorrect")
+	}
+
+	// hash password baru
+	hashed, err := lib.HashPassword(newPass)
+	if err != nil {
+		return err
+	}
+
+	// update
+	return s.repo.UpdatePassword(id, hashed)
+}
+
+func (s *UserService) GetProfile(id int) (*models.ProfileResponse, error) {
+	return s.repo.GetProfile(id)
 }

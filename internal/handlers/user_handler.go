@@ -275,7 +275,11 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedUser)
+	c.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "User delete successfully",
+		Results: updatedUser,
+	})
 }
 
 // delete user
@@ -293,5 +297,65 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "User delete successfully",
+	})
+}
+
+// change password
+func (h *UserHandler) ChangePassword(c *gin.Context) {
+	userIdRaw, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: "Unauthorized",
+			Results: nil,
+		})
+		return
+	}
+
+	userId := int(userIdRaw.(int))
+
+	var req models.ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: err.Error(),
+			Results: nil,
+		})
+		return
+	}
+
+	err := h.service.ChangePassword(userId, req.OldPassword, req.NewPassword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: err.Error(),
+			Results: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Password update successfully",
+	})
+}
+
+func (h *UserHandler) GetProfile(c *gin.Context) {
+	userIdRaw, _ := c.Get("userId")
+	userId := int(userIdRaw.(int))
+
+	user, err := h.service.GetProfile(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Get profile successfully",
+		Results: user,
 	})
 }

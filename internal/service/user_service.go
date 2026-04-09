@@ -102,6 +102,10 @@ func (s *UserService) Update(email string, req *models.UpdateUserRequest) (*mode
 	return s.repo.Update(email, user)
 }
 
+func (s *UserService) UpdateById(id int, user *models.Users) (*models.Users, error) {
+	return s.repo.UpdateById(id, user)
+}
+
 func (s *UserService) Delete(email string) error {
 	_, err := s.repo.GetByEmail(email)
 	if err != nil {

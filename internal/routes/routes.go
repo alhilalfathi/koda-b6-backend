@@ -38,7 +38,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool) {
 			users.GET("/", userHandler.GetAll)
 			users.GET("/:id", userHandler.GetById)
 			users.GET("/email/:email", userHandler.GetByEmail)
-			users.PATCH("/:email", userHandler.Update)
+			users.PATCH("/profile", userHandler.UpdateProfile)
 			users.DELETE("/:id", userHandler.Delete)
 		}
 

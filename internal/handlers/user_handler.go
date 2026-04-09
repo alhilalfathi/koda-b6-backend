@@ -176,7 +176,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	})
 }
 
-// update user
+// update user for forgotpass
 func (h *UserHandler) Update(ctx *gin.Context) {
 	email := ctx.Param("email")
 	if email == "" {
@@ -225,6 +225,57 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 		Message: "User updated successfully",
 		Results: updatedUser,
 	})
+}
+
+// update profile
+func (h *UserHandler) UpdateProfile(c *gin.Context) {
+	userIdRaw, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: "Unauthorized",
+			Results: nil,
+		})
+		return
+	}
+
+	userId, ok := userIdRaw.(int)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: "invalid userId type",
+			Results: nil,
+		})
+		return
+	}
+
+	var req models.UpdateUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: err.Error(),
+			Results: nil,
+		})
+		return
+	}
+
+	user := models.Users{
+		FullName: req.FullName,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
+	updatedUser, err := h.service.UpdateById(userId, &user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+			Results: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, updatedUser)
 }
 
 // delete user

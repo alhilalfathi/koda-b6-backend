@@ -1,6 +1,7 @@
 package di
 
 import (
+	"koda-b6-backend/internal/cache"
 	"koda-b6-backend/internal/handlers"
 	"koda-b6-backend/internal/repository"
 	"koda-b6-backend/internal/service"
@@ -9,7 +10,8 @@ import (
 )
 
 type Container struct {
-	db *pgxpool.Pool
+	db    *pgxpool.Pool
+	cache cache.Cache
 
 	userRepo    *repository.UserRepository
 	userService *service.UserService
@@ -76,10 +78,11 @@ type Container struct {
 	landingHandler *handlers.LandingHandler
 }
 
-func NewContainer(db *pgxpool.Pool) *Container {
-
+// CONSTRUCTOR
+func NewContainer(db *pgxpool.Pool, c cache.Cache) *Container {
 	container := Container{
-		db: db,
+		db:    db,
+		cache: c,
 	}
 
 	container.initDependencies()
@@ -87,72 +90,91 @@ func NewContainer(db *pgxpool.Pool) *Container {
 	return &container
 }
 
+// INIT DEPENDENCIES
 func (c *Container) initDependencies() {
+
+	// USER
 	c.userRepo = repository.NewUserRepository(c.db)
 	c.userService = service.NewUserService(c.userRepo)
 	c.userHandler = handlers.NewUserHandler(c.userService)
 
+	// PRODUCT
 	c.productRepo = repository.NewProductRepository(c.db)
-	c.productService = service.NewProductService(c.productRepo)
+	c.productService = service.NewProductService(c.productRepo, c.cache)
 	c.productHandler = handlers.NewProductHandler(c.productService)
 
+	// REVIEW
 	c.reviewRepo = repository.NewReviewRepository(c.db)
 	c.reviewService = service.NewReviewService(c.reviewRepo)
 	c.reviewHandler = handlers.NewReviewHandler(c.reviewService)
 
+	// CATEGORY
 	c.categoryRepo = repository.NewCategoryRepository(c.db)
 	c.categoryService = service.NewCategoryService(c.categoryRepo)
 	c.categoryHandler = handlers.NewCategoryHandler(c.categoryService)
 
+	// SIZE
 	c.sizeRepo = repository.NewSizeRepository(c.db)
 	c.sizeService = service.NewSizeService(c.sizeRepo)
 	c.sizeHandler = handlers.NewSizeHandler(c.sizeService)
 
+	// VARIANT
 	c.variantRepo = repository.NewVariantRepository(c.db)
 	c.variantService = service.NewVariantService(c.variantRepo)
 	c.variantHandler = handlers.NewVariantHandler(c.variantService)
 
+	// DISCOUNT
 	c.discountRepo = repository.NewDiscountRepository(c.db)
 	c.discountService = service.NewDiscountService(c.discountRepo)
 	c.discountHandler = handlers.NewDiscountHandler(c.discountService)
 
+	// CART
 	c.cartRepo = repository.NewCartRepository(c.db)
 	c.cartService = service.NewCartService(c.cartRepo)
 	c.cartHandler = handlers.NewCartHandler(c.cartService)
 
+	// PRODUCT CATEGORY
 	c.proCatRepo = repository.NewProductCategoryRepository(c.db)
 	c.proCatService = service.NewProductCategoryService(c.proCatRepo)
 	c.proCatHandler = handlers.NewProductCategoryHandler(c.proCatService)
 
+	// PRODUCT VARIANT
 	c.proVarRepo = repository.NewProductVariantRepository(c.db)
 	c.proVarService = service.NewProductVariantService(c.proVarRepo)
 	c.proVarHandler = handlers.NewProductVariantHandler(c.proVarService)
 
+	// PRODUCT SIZE
 	c.proSizRepo = repository.NewProductSizeRepository(c.db)
 	c.proSizService = service.NewProductSizeService(c.proSizRepo)
 	c.proSizHandler = handlers.NewProductSizeHandler(c.proSizService)
 
+	// PRODUCT DISCOUNT
 	c.proDisRepo = repository.NewProductDiscountRepository(c.db)
 	c.proDisService = service.NewProductDiscountService(c.proDisRepo)
 	c.proDisHandler = handlers.NewProductDiscountHandler(c.proDisService)
 
+	// TRANSACTION
 	c.trxRepo = repository.NewTransactionRepository(c.db)
 	c.trxService = service.NewTransactionService(c.trxRepo)
 	c.trxHandler = handlers.NewTransactionHandler(c.trxService)
 
+	// TRANSACTION PRODUCT
 	c.trpRepo = repository.NewTransactionProductRepository(c.db)
 	c.trpService = service.NewTransactionProductService(c.trpRepo)
 	c.trpHandler = handlers.NewTransactionProductHandler(c.trpService)
 
+	// FORGOT PASSWORD
 	c.forgotPassRepo = repository.NewForgotPassRepository(c.db)
 	c.forgotPassService = service.NewForgotPassService(c.forgotPassRepo, c.userRepo)
 	c.forgotPassHandler = handlers.NewForgotPassHandler(c.forgotPassService)
 
+	// LANDING
 	c.landingRepo = repository.NewProductRepository(c.db)
 	c.landingService = service.NewLandingService(c.landingRepo, c.reviewRepo)
 	c.landingHandler = handlers.NewLandingHandler(c.landingService)
 }
 
+// EXPORT HANDLERS
 func (c *Container) UserHandler() *handlers.UserHandler {
 	return c.userHandler
 }

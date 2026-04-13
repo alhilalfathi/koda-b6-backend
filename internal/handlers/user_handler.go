@@ -124,7 +124,7 @@ func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 // @Success 200 {object} models.Response
 // @Failure 400 {object} models.Response
 // @Failure 500 {object} models.Response
-// @Router /register [post]
+// @Router /auth/register [post]
 func (h *UserHandler) Create(ctx *gin.Context) {
 	var newUser models.CreateUserRequest
 
@@ -159,7 +159,7 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 // @Success 200 {object} models.Response
 // @Failure 400 {object} models.Response
 // @Failure 401 {object} models.Response
-// @Router /login [post]
+// @Router /auth/login [post]
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var req models.LoginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -201,7 +201,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 // @Failure 400 {object} models.Response
 // @Failure 404 {object} models.Response
 // @Failure 500 {object} models.Response
-// @Router /users/{email} [put]
+// @Router admin/users/{email} [put]
 func (h *UserHandler) Update(ctx *gin.Context) {
 	email := ctx.Param("email")
 	if email == "" {
@@ -264,7 +264,7 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 // @Failure 400 {object} models.Response
 // @Failure 401 {object} models.Response
 // @Failure 500 {object} models.Response
-// @Router /profile [put]
+// @Router admin/users/profile [put]
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	userIdRaw, exists := c.Get("userId")
 	if !exists {
@@ -327,7 +327,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 // @Param email path string true "User Email"
 // @Success 200 {object} models.Response
 // @Failure 400 {object} models.Response
-// @Router /users/{email} [delete]
+// @Router admin/users/{email} [delete]
 func (h *UserHandler) Delete(ctx *gin.Context) {
 	email := ctx.Param("email")
 
@@ -356,7 +356,7 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 // @Success 200 {object} models.Response
 // @Failure 400 {object} models.Response
 // @Failure 401 {object} models.Response
-// @Router /change-password [put]
+// @Router admin/profile/password[put]
 func (h *UserHandler) ChangePassword(c *gin.Context) {
 	userIdRaw, exists := c.Get("userId")
 	if !exists {
@@ -404,7 +404,7 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} models.Response
 // @Failure 500 {object} models.Response
-// @Router /profile [get]
+// @Router admin/user/profile [get]
 func (h *UserHandler) GetProfile(c *gin.Context) {
 	userIdRaw, _ := c.Get("userId")
 	userId := int(userIdRaw.(int))

@@ -18,7 +18,7 @@ import (
 // @title Backend Coffeeshop
 // @version 1.0.0
 // @description this is basic backend apps with DI
-// @host localhost:8888
+// @host https://hilal-backend.camps.fahrul.id
 // @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header

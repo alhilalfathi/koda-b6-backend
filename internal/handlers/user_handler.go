@@ -471,7 +471,7 @@ func (h *UserHandler) UploadProfilePhoto(ctx *gin.Context) {
 	}
 
 	// ambil user id dari middleware
-	userId := ctx.MustGet("user_id").(int)
+	userId := ctx.MustGet("userId").(int)
 
 	// update ke database
 	err = h.service.UpdateProfilePicture(userId, filename)

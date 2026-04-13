@@ -393,7 +393,7 @@ const docTemplate = `{
             }
         },
         "/admin/users/profile": {
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "BearerAuth": []

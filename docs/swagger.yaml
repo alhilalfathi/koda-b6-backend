@@ -391,7 +391,7 @@ paths:
       tags:
       - User
   /admin/users/profile:
-    put:
+    patch:
       consumes:
       - application/json
       description: Update logged in user profile

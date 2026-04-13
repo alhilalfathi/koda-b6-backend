@@ -93,7 +93,7 @@ definitions:
     required:
     - email
     type: object
-host: localhost:8888
+host: https://hilal-backend.camps.fahrul.id
 info:
   contact: {}
   description: this is basic backend apps with DI

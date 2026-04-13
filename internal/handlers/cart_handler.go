@@ -71,33 +71,12 @@ func (h *CartHandler) GetAllCarts(ctx *gin.Context) {
 	})
 }
 
-func (h *CartHandler) GetCartById(ctx *gin.Context) {
-	val, exists := ctx.Get("userId")
-	if !exists {
-		ctx.JSON(http.StatusUnauthorized, models.Response{Success: false, Message: "Unauthorized"})
-		return
-	}
-	userId := val.(int)
-
-	carts, err := h.service.GetCartById(userId)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, models.Response{Success: false, Message: err.Error()})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, models.Response{
-		Success: true,
-		Message: "Your cart list",
-		Results: carts,
-	})
-}
-
 func (h *CartHandler) GetCartByUser(ctx *gin.Context) {
 	val, exists := ctx.Get("userId")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "Unauthorized: User ID not found in context",
+		ctx.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: "Unauthorized: User ID not found",
 		})
 		return
 	}
@@ -106,17 +85,17 @@ func (h *CartHandler) GetCartByUser(ctx *gin.Context) {
 
 	results, err := h.service.GetCartDetails(userID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": "Failed to fetch cart details: " + err.Error(),
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: "Failed to fetch cart details: " + err.Error(),
 		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Cart details retrieved successfully",
-		"results": results,
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Cart details retrieved successfully",
+		Results: results,
 	})
 }
 
@@ -158,19 +137,25 @@ func (h *CartHandler) Delete(ctx *gin.Context) {
 
 	val, exists := ctx.Get("userId")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
+		ctx.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: "Unauthorized: User ID not found",
+		})
 		return
 	}
 
 	userId := val.(int)
 
 	if err := h.service.Delete(userId); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: "Failed to delete cart: " + err.Error(),
+		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Cart cleared successfully",
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: false,
+		Message: "Delete cart success",
 	})
 }

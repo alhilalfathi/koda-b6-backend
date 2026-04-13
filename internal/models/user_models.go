@@ -33,5 +33,5 @@ type ProfileResponse struct {
 	Id       int     `json:"id" db:"id"`
 	FullName string  `json:"fullname" db:"fullname"`
 	Email    string  `json:"email" db:"email"`
-	Picture  *string `json:"picture" db:"path"`
+	Picture  *string `json:"picture" db:"picture"`
 }

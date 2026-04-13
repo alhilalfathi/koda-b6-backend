@@ -7,6 +7,8 @@ import (
 	"koda-b6-backend/internal/models"
 	"net/http"
 
+	_ "koda-b6-backend/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	swaggerFiles "github.com/swaggo/files"

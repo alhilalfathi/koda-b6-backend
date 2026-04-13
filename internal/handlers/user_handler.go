@@ -20,11 +20,11 @@ func NewUserHandler(sr *service.UserService) *UserHandler {
 
 // GetUsers godoc
 // @Summary Get all user account
-// @Description Show All User
+// @Description Show all users
 // @Tags User
 // @Produce json
-// @Success 200 {object}  models.User
-// @Failure 500 {object}  models.User
+// @Success 200 {object} models.Response
+// @Failure 500 {object} models.Response
 // @Router /admin/users [get]
 func (h *UserHandler) GetAll(ctx *gin.Context) {
 	users, err := h.service.GetAll()
@@ -45,14 +45,14 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 }
 
 // GetUsersByID godoc
-// @Summary Get user account by id
-// @Description Show User by searched id
+// @Summary Get user by ID
+// @Description Get user detail by ID
 // @Tags User
-// @Accept json
 // @Produce json
 // @Param id path string true "User ID"
-// @Success 200 {object} models.User
-// @Failure 500 {object}  models.User
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 404 {object} models.Response
 // @Router /admin/users/{id} [get]
 func (h *UserHandler) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
@@ -80,14 +80,14 @@ func (h *UserHandler) GetById(ctx *gin.Context) {
 }
 
 // GetUsersByEmail godoc
-// @Summary Get user account by email
-// @Description Show User by searched email
+// @Summary Get user by Email
+// @Description Get user detail by email
 // @Tags User
-// @Accept json
 // @Produce json
-// @Param id path string true "User Email"
-// @Success 200 {object} models.User
-// @Failure 500 {object}  models.User
+// @Param email path string true "User Email"
+// @Success 200 {object} models.Response
+// @Failure 404 {object} models.Response
+// @Failure 500 {object} models.Response
 // @Router /admin/users/email/{email} [get]
 func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 	email := ctx.Param("email")
@@ -116,12 +116,15 @@ func (h *UserHandler) GetByEmail(ctx *gin.Context) {
 
 // UserRegister godoc
 // @Summary Register user
-// @Description Create an user account
-// @Tags User
+// @Description Create new user account
+// @Tags Auth
+// @Accept json
 // @Produce json
-// @Success 200 {object}  models.CreateUserRequest
-// @Failure 500 {object}  models.CreateUserRequest
-// @Router  /register [post]
+// @Param request body models.CreateUserRequest true "Register Request"
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 500 {object} models.Response
+// @Router /register [post]
 func (h *UserHandler) Create(ctx *gin.Context) {
 	var newUser models.CreateUserRequest
 
@@ -146,7 +149,17 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 	})
 }
 
-// user login
+// UserLogin godoc
+// @Summary Login user
+// @Description Login user and get JWT token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body models.LoginUserRequest true "Login Request"
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 401 {object} models.Response
+// @Router /login [post]
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var req models.LoginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -176,7 +189,19 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	})
 }
 
-// update user for forgotpass
+// UpdateUser (Forgot Password) godoc
+// @Summary Update user by email
+// @Description Update user data (forgot password flow)
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param email path string true "User Email"
+// @Param request body models.UpdateUserRequest true "Update User"
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 404 {object} models.Response
+// @Failure 500 {object} models.Response
+// @Router /users/{email} [put]
 func (h *UserHandler) Update(ctx *gin.Context) {
 	email := ctx.Param("email")
 	if email == "" {
@@ -227,7 +252,19 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 	})
 }
 
-// update profile
+// UpdateProfile godoc
+// @Summary Update profile
+// @Description Update logged in user profile
+// @Tags User
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body models.UpdateUserRequest true "Update Profile"
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 401 {object} models.Response
+// @Failure 500 {object} models.Response
+// @Router /profile [put]
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	userIdRaw, exists := c.Get("userId")
 	if !exists {
@@ -282,7 +319,15 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	})
 }
 
-// delete user
+// DeleteUser godoc
+// @Summary Delete user
+// @Description Delete user by email
+// @Tags User
+// @Produce json
+// @Param email path string true "User Email"
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Router /users/{email} [delete]
 func (h *UserHandler) Delete(ctx *gin.Context) {
 	email := ctx.Param("email")
 
@@ -300,7 +345,18 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 	})
 }
 
-// change password
+// ChangePassword godoc
+// @Summary Change password
+// @Description Change password for logged in user
+// @Tags User
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body models.ChangePasswordRequest true "Change Password"
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 401 {object} models.Response
+// @Router /change-password [put]
 func (h *UserHandler) ChangePassword(c *gin.Context) {
 	userIdRaw, exists := c.Get("userId")
 	if !exists {
@@ -340,6 +396,15 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 	})
 }
 
+// GetProfile godoc
+// @Summary Get profile
+// @Description Get logged in user profile
+// @Tags User
+// @Security BearerAuth
+// @Produce json
+// @Success 200 {object} models.Response
+// @Failure 500 {object} models.Response
+// @Router /profile [get]
 func (h *UserHandler) GetProfile(c *gin.Context) {
 	userIdRaw, _ := c.Get("userId")
 	userId := int(userIdRaw.(int))

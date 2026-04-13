@@ -157,3 +157,15 @@ func (r *UserRepository) GetProfile(id int) (*models.ProfileResponse, error) {
 
 	return &user, nil
 }
+
+func (r *UserRepository) UpsertProfilePicture(userId int, path string) error {
+	query := `
+	INSERT INTO "USER_PICTURE" (user_id, path)
+	VALUES ($1, $2)
+	ON CONFLICT (user_id)
+	DO UPDATE SET path = EXCLUDED.path
+	`
+
+	_, err := r.db.Exec(context.Background(), query, userId, path)
+	return err
+}

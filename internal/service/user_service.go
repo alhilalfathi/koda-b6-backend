@@ -141,3 +141,7 @@ func (s *UserService) ChangePassword(id int, oldPass, newPass string) error {
 func (s *UserService) GetProfile(id int) (*models.ProfileResponse, error) {
 	return s.repo.GetProfile(id)
 }
+
+func (s *UserService) UpdateProfilePicture(userId int, path string) error {
+	return s.repo.UpsertProfilePicture(userId, path)
+}

@@ -59,6 +59,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool, c cache.Cache) {
 			users.GET("/profile", userHandler.GetProfile)
 			users.PATCH("/profile", userHandler.UpdateProfile)
 			users.PATCH("/profile/password", userHandler.ChangePassword)
+			users.PATCH("/profile/photo", userHandler.UploadProfilePhoto)
 		}
 
 		products := admin.Group("/products")

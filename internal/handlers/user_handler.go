@@ -1,11 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/service"
 	"net/http"
+	"path/filepath"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -421,5 +425,67 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 		Success: true,
 		Message: "Get profile successfully",
 		Results: user,
+	})
+}
+
+// UploadProfilePhoto godoc
+// @Summary Upload profile photo
+// @Description Upload user profile picture
+// @Tags Users
+// @Accept multipart/form-data
+// @Produce json
+// @Param picture formData file true "Profile picture"
+// @Success 200 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Router /admin/users/profile/photo [patch]
+// @Security BearerAuth
+func (h *UserHandler) UploadProfilePhoto(ctx *gin.Context) {
+
+	// ambil file
+	file, err := ctx.FormFile("picture")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "File is required",
+		})
+		return
+	}
+
+	// sanitize filename
+	safeName := filepath.Base(file.Filename)
+
+	// generate nama unik
+	filename := fmt.Sprintf("uploads/%d_%s_%s",
+		time.Now().UnixNano(),
+		uuid.New().String(),
+		safeName,
+	)
+
+	// simpan file
+	if err := ctx.SaveUploadedFile(file, filename); err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: "Failed to save file",
+		})
+		return
+	}
+
+	// ambil user id dari middleware
+	userId := ctx.MustGet("user_id").(int)
+
+	// update ke database
+	err = h.service.UpdateProfilePicture(userId, filename)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Upload success",
+		Results: filename,
 	})
 }

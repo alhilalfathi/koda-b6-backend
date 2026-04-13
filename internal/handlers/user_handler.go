@@ -263,7 +263,7 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 // @Failure 400 {object} models.Response
 // @Failure 401 {object} models.Response
 // @Failure 500 {object} models.Response
-// @Router /admin/users/profile [put]
+// @Router /admin/users/profile [patch]
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	userIdRaw, exists := c.Get("userId")
 	if !exists {

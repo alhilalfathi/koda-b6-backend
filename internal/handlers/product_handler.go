@@ -1,10 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"koda-b6-backend/internal/models"
 	"koda-b6-backend/internal/service"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -202,5 +207,73 @@ func (h *ProductHandler) Delete(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, models.Response{
 		Success: true,
 		Message: "Product deleted",
+	})
+}
+
+func (h *ProductHandler) UploadProductImage(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+	productId, err := strconv.Atoi(idParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Invalid product id",
+		})
+		return
+	}
+
+	// ambil file
+	file, err := ctx.FormFile("image")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "Image is required",
+		})
+		return
+	}
+
+	// validasi tipe file
+	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image/") {
+		ctx.JSON(http.StatusBadRequest, models.Response{
+			Success: false,
+			Message: "File must be image",
+		})
+		return
+	}
+
+	// buat folder kalau belum ada
+	uploadDir := "uploads/products"
+	os.MkdirAll(uploadDir, os.ModePerm)
+
+	// buat nama file unik
+	ext := filepath.Ext(file.Filename)
+	fileName := fmt.Sprintf("product_%d_%d%s", productId, time.Now().Unix(), ext)
+
+	filePath := filepath.Join(uploadDir, fileName)
+
+	// simpan file
+	if err := ctx.SaveUploadedFile(file, filePath); err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: "Failed to save image",
+		})
+		return
+	}
+
+	// simpan path ke DB
+	err = h.service.UpdateProductImage(productId, filePath)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Message: "Image uploaded",
+		Results: map[string]string{
+			"path": filePath,
+		},
 	})
 }

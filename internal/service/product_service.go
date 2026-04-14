@@ -146,3 +146,7 @@ func (s *ProductService) Delete(id int) error {
 
 	return nil
 }
+
+func (s *ProductService) UpdateProductImage(productId int, path string) error {
+	return s.repo.UpdateImage(productId, path)
+}

@@ -69,6 +69,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool, c cache.Cache) {
 			products.GET("/:id", productHandler.GetProductById)
 			products.PATCH("/:id", productHandler.Update)
 			products.DELETE("/:id", productHandler.Delete)
+			products.POST("/:id/image", productHandler.UploadProductImage)
 		}
 
 		reviews := admin.Group("/reviews")

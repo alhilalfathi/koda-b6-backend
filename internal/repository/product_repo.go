@@ -111,3 +111,14 @@ func (r *ProductRepository) RecomendedProducts() ([]models.RecommendedProduct, e
 
 	return products, nil
 }
+
+func (r *ProductRepository) UpdateImage(productId int, path string) error {
+	query := `
+        UPDATE product
+        SET path = $1
+        WHERE id = $2
+    `
+
+	_, err := r.db.Exec(context.Background(), query, path, productId)
+	return err
+}

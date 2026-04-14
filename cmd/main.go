@@ -61,6 +61,7 @@ func main() {
 	// GIN SETUP
 	r := gin.Default()
 	r.Use(middleware.CorsMiddleware())
+	r.Static("/uploads", "./uploads")
 
 	// ROUTES + DI
 	routes.SetupRoutes(r, pool, cache)

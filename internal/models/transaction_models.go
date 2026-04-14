@@ -57,3 +57,11 @@ type TransactionDetailResponse struct {
 	StatusOrder string            `json:"status_order"`
 	Items       []TransactionItem `json:"items"`
 }
+
+type TransactionHistoryResponse struct {
+	Id          int    `json:"id"`
+	TrxId       string `json:"trx_id"`
+	OrderDate   string `json:"order_date"`
+	Total       int    `json:"total"`
+	StatusOrder string `json:"status_order"`
+}

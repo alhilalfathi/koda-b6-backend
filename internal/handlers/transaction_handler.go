@@ -97,3 +97,31 @@ func (h *TransactionHandler) GetDetail(ctx *gin.Context) {
 		Results: data,
 	})
 }
+
+func (h *TransactionHandler) GetByUser(ctx *gin.Context) {
+
+	userIdRaw, exists := ctx.Get("userId")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, models.Response{
+			Success: false,
+			Message: "Unauthorized",
+		})
+		return
+	}
+
+	userId := userIdRaw.(int)
+
+	data, err := h.service.GetByUserId(userId)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, models.Response{
+			Success: false,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.Response{
+		Success: true,
+		Results: data,
+	})
+}

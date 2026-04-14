@@ -39,3 +39,7 @@ func (s *TransactionService) GetAllTransactions() ([]models.Transaction, error) 
 func (s *TransactionService) GetDetail(id int) (*models.TransactionDetailResponse, error) {
 	return s.repo.GetDetail(id)
 }
+
+func (s *TransactionService) GetByUserId(userId int) ([]models.TransactionHistoryResponse, error) {
+	return s.repo.GetByUserId(userId)
+}

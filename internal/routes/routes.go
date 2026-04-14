@@ -155,6 +155,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool, c cache.Cache) {
 
 		trx := admin.Group("/transaction", middleware.AuthMiddleware())
 		{
+			trx.GET("/user", trxHandler.GetByUser)
 			trx.POST("/", trxHandler.CreateTransaction)
 			trx.GET("/", trxHandler.GetAllTransaction)
 			trx.GET("/:id", trxHandler.GetDetail)

@@ -137,3 +137,44 @@ func (r *TransactionRepository) GetDetail(id int) (*models.TransactionDetailResp
 
 	return &result, nil
 }
+
+func (r *TransactionRepository) GetByUserId(userId int) ([]models.TransactionHistoryResponse, error) {
+	query := `
+	SELECT 
+		id,
+		trx_id,
+		order_date,
+		total,
+		status_order
+	FROM "TRANSACTION"
+	WHERE user_id = $1
+	ORDER BY order_date DESC
+	`
+
+	rows, err := r.db.Query(context.Background(), query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []models.TransactionHistoryResponse
+
+	for rows.Next() {
+		var trx models.TransactionHistoryResponse
+
+		err := rows.Scan(
+			&trx.Id,
+			&trx.TrxId,
+			&trx.OrderDate,
+			&trx.Total,
+			&trx.StatusOrder,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, trx)
+	}
+
+	return result, nil
+}

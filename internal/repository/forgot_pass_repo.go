@@ -30,7 +30,7 @@ func (r *ForgotPassRepository) CreateForgotPass(p models.ForgotPass) error {
 }
 
 func (r *ForgotPassRepository) GetByEmailCode(email string, code int) (*models.ForgotPass, error) {
-	query := `SELECT id, email, code FROM "FORGOT_PASS" WHERE LOWER(email)=LOWER($1) AND code=$2`
+	query := `SELECT id, email, code FROM "FORGOT_PASS" WHERE email=$1 AND code=$2`
 
 	rows, err := r.db.Query(context.Background(), query, email, code)
 	if err != nil {

@@ -157,7 +157,7 @@ func SetupRoutes(r *gin.Engine, conn *pgxpool.Pool, c cache.Cache) {
 		{
 			trx.POST("/", trxHandler.CreateTransaction)
 			trx.GET("/", trxHandler.GetAllTransaction)
-			trx.GET("/:id", trxHandler.GetTransactionById)
+			trx.GET("/:id", trxHandler.GetDetail)
 		}
 
 		trp := admin.Group("/transaction-product")

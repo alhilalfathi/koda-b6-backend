@@ -71,20 +71,21 @@ func (h *TransactionHandler) GetAllTransaction(ctx *gin.Context) {
 	})
 }
 
-func (h *TransactionHandler) GetTransactionById(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
+func (h *TransactionHandler) GetDetail(ctx *gin.Context) {
+	idParam := ctx.Param("id")
 
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.Response{
 			Success: false,
-			Message: "Transaction id invalid",
+			Message: "Invalid ID",
 		})
 		return
 	}
 
-	tr, err := h.service.GetTransactionById(id)
+	data, err := h.service.GetDetail(id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, models.Response{
+		ctx.JSON(http.StatusInternalServerError, models.Response{
 			Success: false,
 			Message: err.Error(),
 		})
@@ -93,7 +94,6 @@ func (h *TransactionHandler) GetTransactionById(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, models.Response{
 		Success: true,
-		Message: "Transaction found",
-		Results: tr,
+		Results: data,
 	})
 }

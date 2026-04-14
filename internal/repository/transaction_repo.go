@@ -77,31 +77,63 @@ func (r *TransactionRepository) GetAllTransaction() ([]models.Transaction, error
 	return tr, nil
 }
 
-func (r *TransactionRepository) GetTransactionById(id int) (*models.Transaction, error) {
+func (r *TransactionRepository) GetDetail(id int) (*models.TransactionDetailResponse, error) {
 	query := `
-	SELECT "id", 
-			"trx_id", 
-			"user_id", 
-			"order_date", 
-			"fullname", 
-			"email", 
-			"address", 
-			"delivery", 
-			"delivery_fee", 
-			"tax", 
-			"total", 
-			"status_order"
-	FROM "PRODUCT" 
-	WHERE "id" = $1
+	SELECT 
+		t.id,
+		t.trx_id,
+		t.order_date,
+		t.total,
+		t.status_order,
+
+		tp.product_id,
+		tp.qty,
+
+		p.product_name,
+		p.price,
+		COALESCE(pi.path, '') as path
+
+	FROM "TRANSACTION" t
+	JOIN "TRANSACTION_PRODUCT" tp ON tp.transaction_id = t.id
+	JOIN "PRODUCT" p ON p.id = tp.product_id
+	LEFT JOIN "PRODUCT_IMAGE" pi ON pi.product_id = p.id
+
+	WHERE t.id = $1
 	`
 
 	rows, err := r.db.Query(context.Background(), query, id)
 	if err != nil {
 		return nil, err
 	}
-	tr, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[models.Transaction])
-	if err != nil {
-		return nil, err
+	defer rows.Close()
+
+	var result models.TransactionDetailResponse
+	items := []models.TransactionItem{}
+
+	for rows.Next() {
+		var item models.TransactionItem
+
+		err := rows.Scan(
+			&result.Id,
+			&result.TrxId,
+			&result.OrderDate,
+			&result.Total,
+			&result.StatusOrder,
+			&item.ProductId,
+			&item.Qty,
+			&item.ProductName,
+			&item.Price,
+			&item.Image,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		items = append(items, item)
 	}
-	return &tr, nil
+
+	result.Items = items
+
+	return &result, nil
 }

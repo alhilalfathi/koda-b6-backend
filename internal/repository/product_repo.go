@@ -114,10 +114,10 @@ func (r *ProductRepository) RecomendedProducts() ([]models.RecommendedProduct, e
 
 func (r *ProductRepository) UpdateImage(productId int, path string) error {
 	query := `
-        UPDATE "PRODUCT"
-        SET path = $1
-        WHERE id = $2
-    `
+    UPDATE "PRODUCT_IMAGES"
+    SET "path" = $1
+    WHERE "product_id" = $2
+`
 
 	_, err := r.db.Exec(context.Background(), query, path, productId)
 	return err

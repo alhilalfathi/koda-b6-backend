@@ -114,7 +114,7 @@ func (r *ProductRepository) RecomendedProducts() ([]models.RecommendedProduct, e
 
 func (r *ProductRepository) UpdateImage(productId int, path string) error {
 	query := `
-        UPDATE product
+        UPDATE "PRODUCT"
         SET path = $1
         WHERE id = $2
     `

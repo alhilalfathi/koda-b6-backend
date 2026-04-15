@@ -71,14 +71,14 @@ Create a `.env` file in the root directory based on the following template:
 
 ```env
 # Server
-APP_PORT=8080
+PORT=8888
 
 # PostgreSQL
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=yourpassword
-DB_NAME=koda_coffee
+PGHOST=localhost
+PGPORT=5432
+PGUSER=postgres
+PGPASSWORD=1
+PGSSLMODE=disable
 
 # Redis
 REDIS_HOST=localhost
@@ -86,8 +86,7 @@ REDIS_PORT=6379
 REDIS_PASSWORD=
 
 # JWT
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRED=24h
+APP_SECRET=your_jwt_secret_key
 ```
 
 ### 3. Run Database Migrations
@@ -109,7 +108,7 @@ go mod tidy
 go run cmd/main.go
 ```
 
-The server will start at `http://localhost:8080`.
+The server will start at `http://localhost:8888`.
 
 ---
 
@@ -119,7 +118,7 @@ The server will start at `http://localhost:8080`.
 
 ```bash
 docker build -t koda-b6-backend .
-docker run -p 8080:8080 --env-file .env koda-b6-backend
+docker run -p 8888:8888 --env-file .env koda-b6-backend
 ```
 
 ---
@@ -129,7 +128,7 @@ docker run -p 8080:8080 --env-file .env koda-b6-backend
 Once the server is running, Swagger UI is accessible at:
 
 ```
-http://localhost:8080/swagger/index.html
+http://localhost:8888/swagger/index.html
 ```
 
 To regenerate Swagger docs after changes:
